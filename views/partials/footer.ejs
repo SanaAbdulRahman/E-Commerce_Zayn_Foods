@@ -1,0 +1,154 @@
+<!-- Footer -->
+<footer class="bg3 p-t-75 p-b-32">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-6 col-lg-3 p-b-50">
+				<ul>
+					<h4 class="stext-301 cl0 p-b-30">
+						Help
+					</h4>
+
+					<li class="p-b-10">
+						<a href="/" class="stext-107 cl7 hov-cl1 trans-04">
+							Home
+						</a>
+					</li>
+
+					<li class="p-b-10">
+						<a href="/dishes" class="stext-107 cl7 hov-cl1 trans-04">
+							Dishes
+						</a>
+					</li>
+
+					<li class="p-b-10">
+						<a href="/orders" class="stext-107 cl7 hov-cl1 trans-04">
+							Orders
+						</a>
+					</li>
+
+					<li class="p-b-10">
+						<a href="/about" class="stext-107 cl7 hov-cl1 trans-04">
+							About
+						</a>
+					</li>
+					<li class="p-b-10">
+						<a href="/contact" class="stext-107 cl7 hov-cl1 trans-04">
+							Contact
+						</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="col-sm-6 col-lg-3 p-b-50">
+				<ul>
+
+					<h4 class="stext-301 cl0 p-b-30">
+						GET IN TOUCH
+					</h4>
+
+					<p class="stext-107 cl7 size-201">
+						Any questions? Let us know in store at Calicut, Kerala, India, 673001 or call us
+						on +91 95442 51825
+					</p>
+
+					<div class="p-t-27">
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-facebook"></i>
+						</a>
+
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-instagram"></i>
+						</a>
+
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-pinterest-p"></i>
+						</a>
+					</div>
+				</ul>
+			</div>
+			<div class="col-sm-6 col-lg-3 p-b-50">
+			</div>
+
+			<div class="col-sm-6 col-lg-3 p-b-50">
+				<ul>
+					<h4 class="stext-301 cl0 p-b-30">
+						Newsletter
+					</h4>
+
+					<form>
+						<div class="wrap-input1 w-full p-b-4">
+							<input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email"
+								id="newsletterMail" placeholder="email@example.com">
+							<div class="focus-input1 trans-04"></div>
+						</div>
+
+						<div class="p-t-18">
+							<button type="button"
+								class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04"
+								onclick="subscribe()">
+								Subscribe
+							</button>
+						</div>
+					</form>
+				</ul>
+			</div>
+		</div>
+
+		<div class="p-t-40">
+			<div class="flex-c-m flex-w p-b-18">
+				<a href="#" class="m-all-1">
+					<img src="images/icons/icon-pay-01.png" alt="ICON-PAY">
+				</a>
+
+				<a href="#" class="m-all-1">
+					<img src="images/icons/icon-pay-02.png" alt="ICON-PAY">
+				</a>
+
+				<a href="#" class="m-all-1">
+					<img src="images/icons/icon-pay-03.png" alt="ICON-PAY">
+				</a>
+
+				<a href="#" class="m-all-1">
+					<img src="images/icons/icon-pay-04.png" alt="ICON-PAY">
+				</a>
+
+				<a href="#" class="m-all-1">
+					<img src="images/icons/icon-pay-05.png" alt="ICON-PAY">
+				</a>
+			</div>
+
+			<p class="stext-107 cl6 txt-center">
+				<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+				Copyright &copy;
+				<script>document.write(new Date().getFullYear());</script> All rights reserved | Made with <i
+					class="fa fa-heart-o cl1" aria-hidden="true"></i> by <a
+					href="https://github.com/SanaAbdulRahman/Sana-portfolio-10-5-23" target="_blank" class="cl1">Sanath
+					Abdul Manaf</a>
+				<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+
+			</p>
+		</div>
+	</div>
+</footer>
+
+<script>
+	function subscribe() {
+		const email = document.getElementById("newsletterMail").value;
+
+		const requestOptions = {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				email: email
+			})
+		}
+		fetch("/subscribeNewsletter", requestOptions)
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.status == 200) {
+					location.reload()
+				}
+			})
+			.catch((error) => error.json())
+	}
+</script>

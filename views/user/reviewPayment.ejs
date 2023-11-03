@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Review Payment</title>
+    <link rel="icon" type="image/png" href="images/icons/favicon.png" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+        body {
+            background-color: #fdfdfd;
+            font-family: 'Montserrat', sans-serif
+        }
+
+        .card {
+            border: none
+        }
+
+        .logo {
+            background-color: #eeeeeea8
+        }
+
+        .totals tr td {
+            font-size: 13px
+        }
+
+        .footer {
+            background-color: #eeeeeea8
+        }
+
+        .footer span {
+            font-size: 12px
+        }
+
+        .product-qty span {
+            font-size: 12px;
+            color: #8e8d8d
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5 mb-5">
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="text-left logo p-2 px-5"> <img src="images/icons/logo-01.png" alt="IMG-LOGO"> </div>
+                    <div class="invoice p-5">
+                        <h5>Please Confirmed Your Order <%= orderId %>!</h5>
+
+                        <div class="product border-bottom table-responsive mt-5">
+                            <table class="table table-borderless">
+                                <tbody>
+                                    <% if(cartData.dishes){ %>
+                                        <% cartData.dishes.forEach((cartItem)=>{ %>
+                                            <tr>
+                                                <td width="20%"> <img src="<%= cartItem.image%>" alt="IMG" width="90">
+                                                </td>
+                                                <td width="60%"> <span class="font-weight-bold">
+                                                        <%= cartItem.name%>
+                                                    </span>
+                                                    <div class="product-qty"> <span class="d-block">Quantity:
+                                                            <%=cartItem.quantity%>
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td width="20%">
+                                                    <div class="text-right"> <span class="font-weight-bold">₹
+                                                            <%=cartItem.price * cartItem.quantity%>
+                                                        </span> </div>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                                <%}%>
+                                </tbody>
+                            </table>
+                            <hr>
+                            <div>
+                                <span class="font-weight-bold ml-4 mb-3">
+                                    Payment method
+                                </span>
+                                <div class="ml-5 mt-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="cod"
+                                            value="COD" checked>
+                                        <label class="form-check-label" for="cod">
+                                            Cash On Delivery
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="online"
+                                            value="Online">
+                                        <label class="form-check-label" for="online">
+                                            Online payment
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="wallet"
+                                            value="Wallet">
+                                        <label class="form-check-label" for="wallet">
+                                            Payment from wallet
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row d-flex justify-content-end">
+                            <div class="col-md-5">
+                                <table class="table table-borderless">
+                                    <tbody class="totals">
+                                        <tr>
+                                            <td>
+                                                <div class="text-left"> <span class="text-muted">Subtotal</span> </div>
+                                            </td>
+                                            <td>
+                                                <div class="text-right"> <span>₹ <%= cartData.cartTotal %></span> </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="text-left"> <span class="text-muted">Shipping Charge</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="text-right"> <span>₹ <%= cartData.shippingCharge %></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="text-left"> <span class="text-muted">Discount</span> </div>
+                                            </td>
+                                            <td>
+                                                <div class="text-right"> <span class="text-success">₹ <%=
+                                                            cartData.discount %></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-top border-bottom">
+                                            <td>
+                                                <div class="text-left"> <span class="font-weight-bold">Grand
+                                                        Total</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="text-right"> <span class="font-weight-bold">₹ <%=
+                                                            cartData.grandTotal %></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                        <div id="orderConfirmError"></div>
+                        <div class="d-flex justify-content-center mt-5">
+                            <button onclick="confirmOrder()" class="btn btn-success py-3 px-5">Confirm Order</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="vendor/bootstrap/js/popper.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+
+    <!-- <script src="https://sdk.cashfree.com/js/ui/2.0.0/cashfree.sandbox.js"></script> -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        function confirmOrder() {
+            const orderId = "<%= orderId %>";
+
+            const radioButtons = document.querySelectorAll('input[name="paymentMethod"]');
+
+            let selectedPaymentMethod;
+            for (const radioButton of radioButtons) {
+                if (radioButton.checked) {
+                    selectedPaymentMethod = radioButton.value;
+                    console.log("selectedPaymentMethod", selectedPaymentMethod);
+                    break;
+                }
+            }
+
+            const requestOptions = {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    orderId: orderId,
+                    paymentMethod: selectedPaymentMethod
+                }),
+            };
+
+            fetch("/confirmOrder", requestOptions) //Step 1 in flow
+                .then((response) => {
+                    if (!response.ok) {
+                        response.json().then((error) => {
+                            console.log("error", error);
+
+                            document.getElementById(
+                                "orderConfirmError"
+                            ).innerHTML =
+                                `<div class="alert alert-danger" role="alert">
+									${error.message}
+									</div>`;
+                        })
+                    }
+                    else {
+                        response.json().then(data => {
+                            console.log("responseEJS :", data);
+                            if (data.data.paymentMethod === "COD") {
+                                location.replace(`/orderConfirmed?order_id=${data.data.orderId}`);
+                            } else if (data.data.paymentMethod === "Online") {
+                                const options = {
+                                    "key": data.data.key_id,
+                                    "currency": "INR",
+                                    "description": "Razor Test Transaction",
+                                    "image": "https://previews.123rf.com/images/subhanbaghirov/subhanbaghirov1605/subhanbaghirov160500087/56875269-vector-light-bulb-icon-with-concept-of-idea-brainstorming-idea-illustration-.jpg",
+                                    "order_id": data.data.receiptId,
+                                    "handler": function (resp) {
+                                        console.log("razorpay handler :", resp);
+                                        location.replace(`/orderConfirmed?order_id=${data.data.orderId}`);
+                                    },
+                                    "modal": {
+                                        ondismiss: function () {
+                                            alert(`Payment Failed`)
+                                        }
+                                    },
+                                    "theme": {
+                                        "color": "#22527b"
+                                    }
+                                };
+                                const razorpay = new Razorpay(options);
+                                console.log("razorpay", razorpay);
+                                razorpay.open();
+                                event.preventDefault();
+                            } else if (data.data.paymentMethod === "Wallet") {
+                                location.replace(`/orderConfirmed?order_id=${data.data.orderId}`);
+                            }
+                        })
+                    }
+                })
+                .then((data) => {
+                    console.log(data, "Data");
+                })
+                .catch((error) => {
+                    console.log(error, "error");
+                });
+        }
+
+
+    </script>
+
+</body>
+
+</html>

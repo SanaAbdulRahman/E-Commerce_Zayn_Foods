@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Product Detailed View</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="images/icons/favicon.png" />
+
+	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+
+	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+
+	<link rel="stylesheet" type="text/css" href="fonts/iconic/css/material-design-iconic-font.min.css">
+
+	<link rel="stylesheet" type="text/css" href="fonts/linearicons-v1.0.0/icon-font.min.css">
+
+	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+
+	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
+
+	<link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
+
+	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+
+	<link rel="stylesheet" type="text/css" href="vendor/daterangepicker/daterangepicker.css">
+
+	<link rel="stylesheet" type="text/css" href="vendor/slick/slick.css">
+
+	<link rel="stylesheet" type="text/css" href="vendor/MagnificPopup/magnific-popup.css">
+
+	<link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar/perfect-scrollbar.css">
+
+	<link rel="stylesheet" type="text/css" href="stylesheets/util.css">
+	<link rel="stylesheet" type="text/css" href="stylesheets/main.css">
+	<link rel="stylesheet" href="stylesheets/style.css">
+
+</head>
+
+<body class="animsition">
+
+	<!-- Header -->
+	<header class="header-v4">
+		<!-- Header desktop -->
+		<div class="container-menu-desktop">
+			<!-- Topbar -->
+			<div class="top-bar">
+				<div class="content-topbar flex-sb-m h-full container">
+					<div class="left-top-bar p-l-22">
+						Free shipping for orders above ₹499
+					</div>
+				</div>
+			</div>
+
+			<div class="wrap-menu-desktop">
+				<nav class="limiter-menu-desktop container">
+
+					<!-- Logo desktop -->
+					<a href="#" class="logo">
+						<img src="images/icons/logo-01.png" alt="IMG-LOGO">
+					</a>
+
+					<!-- Menu desktop -->
+					<div class="menu-desktop">
+						<ul class="main-menu">
+							<li>
+								<a href="/">Home</a>
+							</li>
+
+							<li class="active-menu">
+								<a href="/dishes">Dishes</a>
+							</li>
+
+							<li>
+								<a href="/orders">Orders</a>
+							</li>
+
+							<li>
+								<a href="/about">About</a>
+							</li>
+
+							<li>
+								<a href="/contact">Contact</a>
+							</li>
+						</ul>
+					</div>
+
+					<!-- Icon header -->
+					<div class="wrap-icon-header flex-w flex-r-m m-r-15">
+
+						<a href="/viewCart" class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
+							data-notify="<%= cartDishCount %>">
+							<i class="zmdi zmdi-shopping-cart"></i>
+						</a>
+						<a href="/myprofile" class="icon-header-item cl2 hov-cl1 trans-04 p-r-10 p-l-10">
+							<i class="zmdi zmdi-account"></i>
+						</a>
+					</div>
+				</nav>
+			</div>
+		</div>
+
+		<!-- Header Mobile -->
+		<div class="wrap-header-mobile">
+			<!-- Logo moblie -->
+			<div class="logo-mobile">
+				<a href="/"><img src="images/icons/logo-01.png" alt="IMG-LOGO"></a>
+			</div>
+
+			<!-- Icon header -->
+			<div class="wrap-icon-header flex-w flex-r-m m-r-15">
+				<a href="/viewCart" class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
+					data-notify="2">
+					<i class="zmdi zmdi-shopping-cart"></i>
+				</a>
+				<a href="/myprofile" class="icon-header-item cl2 hov-cl1 trans-04 p-r-10 p-l-10">
+					<i class="zmdi zmdi-account"></i>
+				</a>
+			</div>
+
+			<!-- Button show menu -->
+			<div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+				<span class="hamburger-box">
+					<span class="hamburger-inner"></span>
+				</span>
+			</div>
+		</div>
+		<!-- Menu Mobile -->
+		<div class="menu-mobile">
+			<ul class="main-menu-m">
+				<li class="active-menu">
+					<a href="/">Home</a>
+				</li>
+				<li>
+					<a href="/dishes">Dishes</a>
+				</li>
+
+				<li>
+					<a href="/orders">Orders</a>
+				</li>
+
+				<li>
+					<a href="/about">About</a>
+				</li>
+
+				<li>
+					<a href="/contact">Contact</a>
+				</li>
+			</ul>
+		</div>
+	</header>
+
+
+	<!-- Product Detail -->
+	<section class="sec-product-detail bg0 p-t-65 p-b-60">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6 col-lg-7 p-b-30">
+					<div class="p-l-25 p-r-30 p-lr-0-lg">
+						<div class="wrap-slick3 flex-sb flex-w">
+							<div class="wrap-slick3-dots"></div>
+							<div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
+
+							<div class="slick3 gallery-lb">
+								<div class="item-slick3" data-thumb="<%=product.productImage1 %>">
+									<div class="wrap-pic-w pos-relative">
+										<img src="<%=product.productImage1 %>" alt="IMG-PRODUCT">
+										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
+											href="<%=product.productImage1 %>">
+											<i class="fa fa-expand"></i>
+										</a>
+									</div>
+								</div>
+								<div class="item-slick3" data-thumb="<%=product.productImage2 %>">
+									<div class="wrap-pic-w pos-relative">
+										<img src="<%=product.productImage2 %>" alt="IMG-PRODUCT">
+										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
+											href="<%=product.productImage2 %>">
+											<i class="fa fa-expand"></i>
+										</a>
+									</div>
+								</div>
+								<div class="item-slick3" data-thumb="<%=product.productImage3 %>">
+									<div class="wrap-pic-w pos-relative">
+										<img src="<%=product.productImage3 %>" alt="IMG-PRODUCT">
+										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
+											href="<%=product.productImage3 %>">
+											<i class="fa fa-expand"></i>
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-6 col-lg-5 p-b-30">
+					<div class="p-r-50 p-t-5 p-lr-0-lg">
+						<h4 class="mtext-105 cl2 js-name-detail p-b-14">
+							<%=product.productName %>
+						</h4>
+
+						<span class="mtext-106 cl2">
+							₹ <%=product.productPrice %>
+						</span>
+
+						<p class="stext-102 cl3 p-t-23" style="max-lines: 3;">
+							<%=product.productDescription.slice(0, 300) %>
+						</p>
+						<!--  -->
+						<div class="p-t-20">
+							<div class="flex-w p-b-20">
+								<div class="size-203 respon6">
+									<span class="cl1">Category </span>
+								</div>
+								<div class="respon6-next">
+									&emsp; <%=product.productCategory.categoryName %>
+								</div>
+							</div>
+							<div class="flex-w p-b-20">
+								<div class="size-203 respon6">
+									<span class="cl1">Type </span>
+								</div>
+								<div class="respon6-next">
+									&emsp; <%=product.productType %>
+								</div>
+							</div>
+
+							<div class="flex-w p-b-20">
+								<div class="size-203 respon6">
+									<span class="cl1">Serveings</span>
+								</div>
+								<div class="respon6-next">
+									&emsp; <%=product.productServings %>
+								</div>
+							</div>
+
+							<div class="flex-w p-b-20">
+								<div class="size-203">
+									<span class="fs-18 cl11">
+
+										<% if(!product.ratingScore || product.ratingScore <=0){ %>
+											<i class="zmdi zmdi-star-outline"></i>
+											<i class="zmdi zmdi-star-outline"></i>
+											<i class="zmdi zmdi-star-outline"></i>
+											<i class="zmdi zmdi-star-outline"></i>
+											<i class="zmdi zmdi-star-outline"></i>
+											<% } else if(product.ratingScore==1) { %>
+												<i class="zmdi zmdi-star"></i>
+												<i class="zmdi zmdi-star-outline"></i>
+												<i class="zmdi zmdi-star-outline"></i>
+												<i class="zmdi zmdi-star-outline"></i>
+												<i class="zmdi zmdi-star-outline"></i>
+												<% } else if(product.ratingScore==2) { %>
+													<i class="zmdi zmdi-star"></i>
+													<i class="zmdi zmdi-star"></i>
+													<i class="zmdi zmdi-star-outline"></i>
+													<i class="zmdi zmdi-star-outline"></i>
+													<i class="zmdi zmdi-star-outline"></i>
+													<% } else if(product.ratingScore==3) { %>
+														<i class="zmdi zmdi-star"></i>
+														<i class="zmdi zmdi-star"></i>
+														<i class="zmdi zmdi-star"></i>
+														<i class="zmdi zmdi-star-outline"></i>
+														<i class="zmdi zmdi-star-outline"></i>
+														<% } else if(product.ratingScore==4) { %>
+															<i class="zmdi zmdi-star"></i>
+															<i class="zmdi zmdi-star"></i>
+															<i class="zmdi zmdi-star"></i>
+															<i class="zmdi zmdi-star"></i>
+															<i class="zmdi zmdi-star-outline"></i>
+															<% } else if(product.ratingScore>= 5) { %>
+																<i class="zmdi zmdi-star"></i>
+																<i class="zmdi zmdi-star"></i>
+																<i class="zmdi zmdi-star"></i>
+																<i class="zmdi zmdi-star"></i>
+																<i class="zmdi zmdi-star"></i>
+																<% } %>
+
+
+									</span>
+								</div>
+							</div>
+
+							<div class="flex-w p-b-10">
+								<div class="size-204 flex-w flex-m respon6-next">
+									<form>
+										<div onclick="addToCart('<%= product._id %>', '<%= product.productName %>')"
+											class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+											Add to cart
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="bor10 m-t-50 p-t-43 p-b-40" id="#productDescription">
+				<!-- Tab01 -->
+				<div class="tab01">
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item p-b-10">
+							<a class="nav-link active" data-toggle="tab" href="#description" role="tab">Description</a>
+						</li>
+
+						<li class="nav-item p-b-10">
+							<a class="nav-link" data-toggle="tab" href="#reviews" role="tab">Reviews</a>
+						</li>
+					</ul>
+
+					<!-- Tab panes -->
+					<div class="tab-content p-t-43">
+						<!-- - -->
+						<div class="tab-pane fade show active" id="description" role="tabpanel">
+							<div class="how-pos2 p-lr-15-md">
+								<p class="stext-102 cl6">
+									<%=product.productDescription %>
+								</p>
+							</div>
+						</div>
+
+						<!-- - -->
+						<div class="tab-pane fade" id="reviews" role="tabpanel">
+							<div class="row">
+								<div class="col-sm-10 col-md-8 col-lg-6 m-lr-auto">
+									<div class="p-b-30 m-lr-15-sm">
+										<!-- Add review -->
+										<form class="w-full p-b-60">
+											<h5 class="mtext-108 cl2 p-b-23">
+												Add a review
+											</h5>
+
+											<div class="flex-w flex-m p-b-10">
+												<span class="stext-102 cl3 m-r-16">
+													Your rating
+												</span>
+
+												<span class="wrap-rating fs-18 cl11 pointer">
+													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
+													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
+													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
+													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
+													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
+													<input class="dis-none" type="number" id="rateingDetect"
+														name="rating" onclick="rating()">
+												</span>
+											</div>
+
+											<div class="row p-b-25">
+												<div class="col-12 p-b-5">
+													<label class="stext-102 cl3" for="review">Your review</label>
+													<textarea class="size-110 bor8 stext-102 cl2 p-lr-20 p-tb-10"
+														id="review" name="review"></textarea>
+												</div>
+											</div>
+											<div id="reviewErr"></div>
+											<button
+												class="flex-c-m stext-101 cl0 size-112 bg7 bor11 hov-btn3 p-lr-15 trans-04 m-b-10">
+												Submit
+											</button>
+										</form>
+										<!-- Review -->
+										<h5 class="mtext-108 cl2 p-b-32">
+											All reviews
+										</h5>
+										<% product.review.forEach((review)=> { %>
+											<div class="flex-w flex-t p-b-20">
+												<div class="size-207">
+													<div class="flex-w flex-sb-m p-b-17">
+														<span class="mtext-107 cl2 p-r-20">
+															<%= review.username %>
+														</span>
+
+														<span class="fs-18 cl11">
+															<% if(!review.rating || review.rating <=0){ %>
+																<i class="zmdi zmdi-star-outline"></i>
+																<i class="zmdi zmdi-star-outline"></i>
+																<i class="zmdi zmdi-star-outline"></i>
+																<i class="zmdi zmdi-star-outline"></i>
+																<i class="zmdi zmdi-star-outline"></i>
+																<% } else if(review.rating==1) { %>
+																	<i class="zmdi zmdi-star"></i>
+																	<i class="zmdi zmdi-star-outline"></i>
+																	<i class="zmdi zmdi-star-outline"></i>
+																	<i class="zmdi zmdi-star-outline"></i>
+																	<i class="zmdi zmdi-star-outline"></i>
+																	<% } else if(review.rating==2) { %>
+																		<i class="zmdi zmdi-star"></i>
+																		<i class="zmdi zmdi-star"></i>
+																		<i class="zmdi zmdi-star-outline"></i>
+																		<i class="zmdi zmdi-star-outline"></i>
+																		<i class="zmdi zmdi-star-outline"></i>
+																		<% } else if(review.rating==3) { %>
+																			<i class="zmdi zmdi-star"></i>
+																			<i class="zmdi zmdi-star"></i>
+																			<i class="zmdi zmdi-star"></i>
+																			<i class="zmdi zmdi-star-outline"></i>
+																			<i class="zmdi zmdi-star-outline"></i>
+																			<% } else if(review.rating==4) { %>
+																				<i class="zmdi zmdi-star"></i>
+																				<i class="zmdi zmdi-star"></i>
+																				<i class="zmdi zmdi-star"></i>
+																				<i class="zmdi zmdi-star"></i>
+																				<i class="zmdi zmdi-star-outline"></i>
+																				<% } else if(review.rating>= 5) { %>
+																					<i class="zmdi zmdi-star"></i>
+																					<i class="zmdi zmdi-star"></i>
+																					<i class="zmdi zmdi-star"></i>
+																					<i class="zmdi zmdi-star"></i>
+																					<i class="zmdi zmdi-star"></i>
+																					<% } %>
+														</span>
+													</div>
+
+													<p class="stext-102 cl6">
+														<%= review.message %>
+													</p>
+												</div>
+											</div>
+											<% }) %>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+	<!-- Related Products -->
+	<section class="sec-relate-product bg0 p-t-45 p-b-105">
+		<div class="container">
+			<div class="p-b-45">
+				<h3 class="ltext-106 cl5 txt-center">
+					Related Products
+				</h3>
+			</div>
+
+			<!-- Slide2 -->
+			<div class="wrap-slick2">
+				<div class="slick2">
+					<% dishes.forEach((batch)=> { %>
+						<% batch.dishes.forEach((dish)=> { %>
+							<% if (dish.productCategory.categoryName==product.productCategory.categoryName){ %>
+								<div
+									class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item <%=dish.productCategory.categoryName%>">
+									<!-- Block2 -->
+									<div class="block2">
+										<div class="block2-pic hov-img0">
+											<!-- product Image -->
+											<img src="<%= dish.productImage1 %>" alt="IMG-PRODUCT">
+
+											<!-- Button -->
+											<a href="/dishDetailedView?id=<%=dish._id%>"
+												class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04">
+												Detailed View
+											</a>
+										</div>
+
+										<div class="block2-txt flex-w flex-t p-t-14">
+											<div class="block2-txt-child1 flex-col-l ">
+												<a href="/dishSingleView"
+													class="mtext-102 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+													<%= dish.productName %>
+												</a>
+												<div class="flex-w p-b-20">
+													<div class="size-203">
+														<span class="fs-18 cl11">
+															<% if(!dish.ratingScore || dish.ratingScore <=0){ %>
+																<i class="zmdi zmdi-star-outline"></i>
+																<i class="zmdi zmdi-star-outline"></i>
+																<i class="zmdi zmdi-star-outline"></i>
+																<i class="zmdi zmdi-star-outline"></i>
+																<i class="zmdi zmdi-star-outline"></i>
+																<% } else if(dish.ratingScore==1) { %>
+																	<i class="zmdi zmdi-star"></i>
+																	<i class="zmdi zmdi-star-outline"></i>
+																	<i class="zmdi zmdi-star-outline"></i>
+																	<i class="zmdi zmdi-star-outline"></i>
+																	<i class="zmdi zmdi-star-outline"></i>
+																	<% } else if(dish.ratingScore==2) { %>
+																		<i class="zmdi zmdi-star"></i>
+																		<i class="zmdi zmdi-star"></i>
+																		<i class="zmdi zmdi-star-outline"></i>
+																		<i class="zmdi zmdi-star-outline"></i>
+																		<i class="zmdi zmdi-star-outline"></i>
+																		<% } else if(dish.ratingScore==3) { %>
+																			<i class="zmdi zmdi-star"></i>
+																			<i class="zmdi zmdi-star"></i>
+																			<i class="zmdi zmdi-star"></i>
+																			<i class="zmdi zmdi-star-outline"></i>
+																			<i class="zmdi zmdi-star-outline"></i>
+																			<% } else if(dish.ratingScore==4) { %>
+																				<i class="zmdi zmdi-star"></i>
+																				<i class="zmdi zmdi-star"></i>
+																				<i class="zmdi zmdi-star"></i>
+																				<i class="zmdi zmdi-star"></i>
+																				<i class="zmdi zmdi-star-outline"></i>
+																				<% } else if(dish.ratingScore>= 5) { %>
+																					<i class="zmdi zmdi-star"></i>
+																					<i class="zmdi zmdi-star"></i>
+																					<i class="zmdi zmdi-star"></i>
+																					<i class="zmdi zmdi-star"></i>
+																					<i class="zmdi zmdi-star"></i>
+																					<% } %>
+														</span>
+													</div>
+												</div>
+												<span class="ltext-102 cl1">
+													₹<%= dish.productPrice %>
+												</span>
+												<div class="flex-w p-t-15">
+													<p class="bor4 p-tb-5 p-lr-10">
+														<%= dish.productType %>
+													</p>
+													<p class="bor4 p-tb-5 p-lr-10 m-l-15">
+														<%= dish.productServings %>
+															Servings
+													</p>
+												</div>
+											</div>
+											<div class="block2-txt-child2 flex-r p-t-3">
+												<div onclick="addToCart('<%= dish._id %>', '<%= dish.productName %>')"
+													class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+													<div class="icon-heart1 dis-block trans-04" alt="ICON"><i
+															class="zmdi zmdi-shopping-cart"></i></div>
+													<div class="icon-heart2 dis-block trans-04 ab-t-l" alt="ICON"><i
+															class="zmdi zmdi-shopping-cart"></i></div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<%}%>
+									<% }) %>
+										<% }) %>
+											<% dishes.forEach((batch)=> { %>
+												<% batch.dishes.forEach((dish)=> { %>
+													<% if (dish.productType==product.productType &&
+														dish.productCategory.categoryName
+														!=product.productCategory.categoryName ){ %>
+														<div
+															class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item <%=dish.productCategory.categoryName%>">
+															<!-- Block2 -->
+															<div class="block2">
+																<div class="block2-pic hov-img0">
+																	<!-- product Image -->
+																	<img src="<%= dish.productImage1 %>"
+																		alt="IMG-PRODUCT">
+
+																	<!-- Button -->
+																	<a href="/dishDetailedView?id=<%=dish._id%>"
+																		class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04">
+																		Detailed View
+																	</a>
+																</div>
+
+																<div class="block2-txt flex-w flex-t p-t-14">
+																	<div class="block2-txt-child1 flex-col-l ">
+																		<a href="/dishSingleView"
+																			class="mtext-102 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+																			<%= dish.productName %>
+																		</a>
+																		<div class="flex-w p-b-20">
+																			<div class="size-203">
+																				<span class="fs-18 cl11">
+																					<% if(!dish.ratingScore || dish.ratingScore <=0){ %>
+																						<i class="zmdi zmdi-star-outline"></i>
+																						<i class="zmdi zmdi-star-outline"></i>
+																						<i class="zmdi zmdi-star-outline"></i>
+																						<i class="zmdi zmdi-star-outline"></i>
+																						<i class="zmdi zmdi-star-outline"></i>
+																						<% } else if(dish.ratingScore==1) { %>
+																							<i class="zmdi zmdi-star"></i>
+																							<i class="zmdi zmdi-star-outline"></i>
+																							<i class="zmdi zmdi-star-outline"></i>
+																							<i class="zmdi zmdi-star-outline"></i>
+																							<i class="zmdi zmdi-star-outline"></i>
+																							<% } else if(dish.ratingScore==2) { %>
+																								<i class="zmdi zmdi-star"></i>
+																								<i class="zmdi zmdi-star"></i>
+																								<i class="zmdi zmdi-star-outline"></i>
+																								<i class="zmdi zmdi-star-outline"></i>
+																								<i class="zmdi zmdi-star-outline"></i>
+																								<% } else if(dish.ratingScore==3) { %>
+																									<i class="zmdi zmdi-star"></i>
+																									<i class="zmdi zmdi-star"></i>
+																									<i class="zmdi zmdi-star"></i>
+																									<i class="zmdi zmdi-star-outline"></i>
+																									<i class="zmdi zmdi-star-outline"></i>
+																									<% } else if(dish.ratingScore==4) { %>
+																										<i class="zmdi zmdi-star"></i>
+																										<i class="zmdi zmdi-star"></i>
+																										<i class="zmdi zmdi-star"></i>
+																										<i class="zmdi zmdi-star"></i>
+																										<i class="zmdi zmdi-star-outline"></i>
+																										<% } else if(dish.ratingScore>= 5) { %>
+																											<i class="zmdi zmdi-star"></i>
+																											<i class="zmdi zmdi-star"></i>
+																											<i class="zmdi zmdi-star"></i>
+																											<i class="zmdi zmdi-star"></i>
+																											<i class="zmdi zmdi-star"></i>
+																											<% } %>
+																				</span>
+																			</div>
+																		</div>
+																		<span class="ltext-102 cl1">
+																			₹<%= dish.productPrice %>
+																		</span>
+																		<div class="flex-w p-t-15">
+																			<p class="bor4 p-tb-5 p-lr-10">
+																				<%= dish.productType %>
+																			</p>
+																			<p class="bor4 p-tb-5 p-lr-10 m-l-15">
+																				<%= dish.productServings %>
+																					Servings
+																			</p>
+																		</div>
+																	</div>
+																	<div class="block2-txt-child2 flex-r p-t-3">
+																		<div onclick="addToCart('<%= dish._id %>', '<%= dish.productName %>')"
+																			class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+																			<div class="icon-heart1 dis-block trans-04"
+																				alt="ICON"><i
+																					class="zmdi zmdi-shopping-cart"></i>
+																			</div>
+																			<div class="icon-heart2 dis-block trans-04 ab-t-l"
+																				alt="ICON"><i
+																					class="zmdi zmdi-shopping-cart"></i>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+														<%}%>
+															<% }) %>
+																<% }) %>
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+	<!-- Footer -->
+	<%- include('../partials/footer.ejs')%>
+
+		<!-- Back to top -->
+		<div class="btn-back-to-top" id="myBtn">
+			<span class="symbol-btn-back-to-top">
+				<i class="zmdi zmdi-chevron-up"></i>
+			</span>
+		</div>
+
+		<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+
+		<script src="vendor/animsition/js/animsition.min.js"></script>
+
+		<script src="vendor/bootstrap/js/popper.js"></script>
+		<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+		<script src="vendor/select2/select2.min.js"></script>
+		<script>
+			$(".js-select2").each(function () {
+				$(this).select2({
+					minimumResultsForSearch: 20,
+					dropdownParent: $(this).next('.dropDownSelect2')
+				});
+			})
+		</script>
+
+		<script src="vendor/daterangepicker/moment.min.js"></script>
+		<script src="vendor/daterangepicker/daterangepicker.js"></script>
+
+		<script src="vendor/slick/slick.min.js"></script>
+		<script src="js/slick-custom.js"></script>
+
+		<script src="vendor/parallax100/parallax100.js"></script>
+		<script>
+			$('.parallax100').parallax100();
+		</script>
+
+		<script src="vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
+		<script>
+			$('.gallery-lb').each(function () { // the containers for all your galleries
+				$(this).magnificPopup({
+					delegate: 'a', // the selector for gallery item
+					type: 'image',
+					gallery: {
+						enabled: true
+					},
+					mainClass: 'mfp-fade'
+				});
+			});
+		</script>
+
+		<script>
+
+			function showError(htmlElement, errorMsg) {
+				document.getElementById(htmlElement).innerHTML = `<div class="alert alert-danger" role="alert">${errorMsg}</div>`
+				setTimeout(() => {
+					document.getElementById(htmlElement).innerHTML = `<div></div>`
+				}, 6000)
+			}
+
+
+			const ratingForm = document.querySelector('.w-full');
+			const ratingInput = document.querySelector('#rateingDetect');
+			const reviewInput = document.querySelector('#review');
+			const productId = "<%=product._id %>"
+
+			ratingForm.addEventListener('submit', (event) => {
+				event.preventDefault();
+
+				const requestOptions = {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						rating: ratingInput.value,
+						message: reviewInput.value,
+						productId: productId
+					})
+				}
+
+				console.log(requestOptions.body)
+
+				fetch("/postAddReview", requestOptions)
+					.then((response) => {
+						if (!response.ok) {
+							response.json().then((error) => {
+								showError('reviewErr', error.message);
+							})
+						}
+						else {
+							response.json().then(data => {
+								location.reload(`/`)
+							})
+						}
+					})
+					.then()
+					.catch((error) => {
+						console.log(error);
+					});
+
+
+			});
+
+		</script>
+
+		<script src="vendor/isotope/isotope.pkgd.min.js"></script>
+
+		<script src="vendor/sweetalert/sweetalert.min.js"></script>
+		<script>
+			async function addToCart(id, name) {
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ productId: id })
+				};
+				fetch('/addToCart', requestOptions)
+					.then(response => response.json())
+					.then(data => {
+						swal(name, "is added to !", "success").then(() => {
+							location.reload()
+						})
+					})
+					.catch((err) => {
+						console.error(err)
+						swal("Cannot add dish to cart", "Kindly try after sometime.");
+					})
+			}
+			$('.js-addwish-b2, .js-addwish-detail').on('click', function (e) {
+				e.preventDefault();
+			});
+
+			$('.js-addwish-b2').each(function () {
+				var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
+				$(this).on('click', function () {
+					swal(nameProduct, "is added to Cart !", "success");
+
+					$(this).addClass('js-addedwish-b2');
+					$(this).off('click');
+				});
+			});
+
+			$('.js-addwish-detail').each(function () {
+				var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
+
+				$(this).on('click', function () {
+					swal(nameProduct, "is added to  !", "success");
+
+					$(this).addClass('js-addedwish-detail');
+					$(this).off('click');
+				});
+			});
+
+			/*---------------------------------------------*/
+
+			$('.js-addcart-detail').each(function () {
+				var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
+				$(this).on('click', function () {
+					swal(nameProduct, "is added to cart !", "success");
+				});
+			});
+
+		</script>
+
+		<script>
+			$('.js-addwish-b2, .js-addwish-detail').on('click', function (e) {
+				e.preventDefault();
+			});
+
+			$('.js-addwish-b2').each(function () {
+				var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
+				$(this).on('click', function () {
+					swal(nameProduct, "is added to wishlist !", "success");
+
+					$(this).addClass('js-addedwish-b2');
+					$(this).off('click');
+				});
+			});
+
+			$('.js-addwish-detail').each(function () {
+				var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
+
+				$(this).on('click', function () {
+					swal(nameProduct, "is added to wishlist !", "success");
+
+					$(this).addClass('js-addedwish-detail');
+					$(this).off('click');
+				});
+			});
+
+			/*---------------------------------------------*/
+
+			$('.js-addcart-detail').each(function () {
+				var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
+				$(this).on('click', function () {
+					swal(nameProduct, "is added to cart !", "success");
+				});
+			});
+
+		</script>
+
+		<script src="vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+		<script>
+			$('.js-pscroll').each(function () {
+				$(this).css('position', 'relative');
+				$(this).css('overflow', 'hidden');
+				var ps = new PerfectScrollbar(this, {
+					wheelSpeed: 1,
+					scrollingThreshold: 1000,
+					wheelPropagation: false,
+				});
+
+				$(window).on('resize', function () {
+					ps.update();
+				})
+			});
+		</script>
+
+		<script src="js/main.js"></script>
+
+</body>
+
+</html>
