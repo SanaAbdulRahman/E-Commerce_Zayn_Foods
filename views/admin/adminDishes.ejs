@@ -110,7 +110,7 @@
                                                             <td class="fh-pt-4" width="15%">
                                                                 <a
                                                                     href="../admin/getEditProducts?id=<%=dish._id%>">Edit</a>
-                                                                <% if(dish.active===false){ %>
+                                                                <% if(dish.active===true){ %>
                                                                     <a href="../admin/activeProduct?id=<%=dish._id%>"
                                                                         class="pl-2">Block</a>
                                                                     <% } else { %>

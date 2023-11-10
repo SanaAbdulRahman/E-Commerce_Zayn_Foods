@@ -104,7 +104,8 @@
 			</div>
 			<!-- Icon header -->
 			<div class="wrap-icon-header flex-w flex-r-m m-r-15">
-				<div href="/viewCart" class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti" data-notify="<%= cartDishCount %>">
+				<div href="/viewCart" class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
+					data-notify="<%= cartDishCount %>">
 					<i class="zmdi zmdi-shopping-cart"></i>
 				</div>
 			</div>
@@ -262,6 +263,74 @@
 		</div>
 	</div>
 
+
+	<!-- Wallet info-->
+	<div class="wrap-header-myaccount js-panel-walletInfo">
+		<div class="s-full js-hide-cart"></div>
+		<div class="header-myaccount flex-col-l p-l-65 p-r-25">
+			<div class="header-myaccount-title flex-w flex-sb-m p-b-8">
+				<span class="mtext-103 cl2">
+					Wallet info
+				</span>
+				<div class="fs-35 lh-10 cl2 p-lr-5 pointer hov-cl1 trans-04 js-hide-walletInfo">
+					<i class="zmdi zmdi-close"></i>
+				</div>
+
+			</div>
+
+			<div class="header-myaccount-content flex-w js-pscroll">
+				<ul class="header-myaccount-wrapitem w-full">
+					<% if(user.wallets && user.wallets.length>0){ %>
+						<div class="row">
+							<div class="col-md-6">Wallet Balance</div>
+							<div class="col-md-6">
+								<%= user.walletBalance %>
+							</div>
+
+						</div><br><br>
+						<table class="table table-bordered text-center">
+							<thead class="bg-secondary text-dark">
+								<tr>
+									<th>Type</th>
+									<th>Date</th>
+									<th>Amount</th>
+
+
+								</tr>
+							</thead>
+							<tbody class="align-middle">
+								<% for(let i=(user.wallets.length)-1;i>=0;i--){ %>
+									<tr>
+										<td class="align-middle">
+											<%= user.wallets[i].transactionType %>
+										</td>
+										<td class="align-middle">
+											<% const rawDate=new Date(user.wallets[i].date); %>
+												<% const year=rawDate.getFullYear(); %>
+													<% const month=String(rawDate.getMonth() + 1).padStart(2, '0' ); %>
+														<% const day=String(rawDate.getDate()).padStart(2, '0' ); %>
+															<%= `${day}-${month}-${year}` %>
+										</td>
+										<td class="align-middle">
+											<%= user.wallets[i].amount %>
+										</td>
+									</tr>
+									<% } %>
+							</tbody>
+						</table>
+
+						<% }else{ %>
+							<div class="row">
+								<div class="col-md-6">Wallet Balance</div>
+								<div class="col-md-6">0</div>
+
+							</div>
+							<% } %>
+				</ul>
+
+			</div>
+		</div>
+	</div>
 	<!-- profile -->
 	<form class="bg0 p-t-75 p-b-85">
 		<div class="container">
@@ -291,11 +360,24 @@
 								<a type='button'
 									class="flex-c-m stext-101 cl2 size-115 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-t-20 m-r-10 js-show js-show-editInfo">
 									Edit info
-								</a><a type='button' href="/getSignout"
-									class="flex-c-m stext-101 cl1 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-t-20">
-									Sign out
+								</a>
+								<a type='button'
+									class="flex-c-m stext-101 cl2 size-115 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-t-20 m-r-10 js-show js-show-walletInfo">
+									Wallet
 								</a>
 							</div>
+							<div class="p-b-10 d-flex">
+								<a type='button' href="/orders"
+									class="flex-c-m stext-101 cl2 size-115 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-t-20 m-r-10 js-show">
+									Orders
+								</a>
+								<a type='button' href="/getSignout"
+									class="flex-c-m stext-101 cl1 size-115 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-t-20">
+									Sign out
+								</a>
+
+							</div>
+
 						</div>
 					</div>
 				</div>
@@ -309,7 +391,8 @@
 								<li class="nav-item"><a data-toggle="tab" href="#newAddress" class="nav-link active">New
 										Address</a></li>
 								<li class="nav-item"><a data-toggle="tab" href="#savedAddress"
-										class="p-r-15 nav-link">Saved Address</a></li>
+										class="p-r-15 nav-link">Saved
+										Address</a></li>
 
 							</ul>
 
@@ -604,9 +687,9 @@
 				}
 				fetch("/resetPassword", requestOptions)
 					.then((response) => response.json()).then((data) => {
-						if (data.status == 401){
+						if (data.status == 401) {
 							showError("resetPasswordError", "Current Password does not match")
-						} else if(data.status == 200){
+						} else if (data.status == 200) {
 							location.reload();
 						}
 						console.log(data.status)

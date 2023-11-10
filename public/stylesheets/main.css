@@ -125,15 +125,18 @@ Input, textarea : 14px/1.6 '', Arial, sans-serif;
 
 /*//////////////////////////////////////////////////////////////////
 [ LOADDING ]*/
-body{
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-  scrollbar-width: none; 
-  
+body {
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+
 }
 
-body::-webkit-scrollbar { 
-  display: none;  /* Safari and Chrome */
+body::-webkit-scrollbar {
+  display: none;
+  /* Safari and Chrome */
 }
+
 a {
   text-decoration: none;
   color: rgb(73, 73, 73);
@@ -382,6 +385,8 @@ a {
   display: -ms-flexbox;
   display: flex;
   align-items: center;
+
+
 }
 
 .main-menu>li {
@@ -404,6 +409,7 @@ a {
 
 .header-v3 .main-menu>li>a {
   color: #fff;
+
 }
 
 /*---------------------------------------------*/
@@ -2592,6 +2598,7 @@ input.num-product::-webkit-inner-spin-button {
   position: relative;
   margin-right: 20px;
 }
+
 .how-itemcart1-1 img {
   width: 100%;
 }

@@ -12,6 +12,7 @@ const sendMail = require("../utils/validators/nodeMailer");
 const { format } = require("date-fns");
 const { CATEGORY, PRODUCT } = require("../utils/constants/schemaName");
 const cartModel = require("../models/cartModel");
+const moment = require("moment");
 const { addAddress, updateAddress } = require("../utils/validators/addressValidator");
 const {
   getCartDetailsForCartPage,
@@ -67,102 +68,173 @@ module.exports = {
   },
 
   getHome: async (req, res, next) => {
-    try {
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 12;
-      console.log("get home :", req.session);
 
-      const startIndex = (page - 1) * limit;
+    try {
+
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 8;
+      const skip = (page - 1) * limit;
+      // const startIndex = (page - 1) * limit;
+      console.log("skip", skip);
+      console.log("limit", limit);
 
       const userId = req.session.userId;
 
       const currentTime = format(new Date(), "HH:mm:ss");
       console.log("currentTime", currentTime);
-      let batches = await batchModel.aggregate([
-        {
-          $match: {
-            status: true,
-            batchName: { $ne: "All Time" }
-          },
-        },
-        // {
-        //   $match: {
-        //     batchName: { $ne: "All Time" } // Exclude batches with name "All Time"
-        //   },
-        // },
-        {
-          $addFields: {
-            startTime: {
-              $substr: [
-                {
-                  $dateToString: {
-                    format: "%H:%M:%S",
-                    date: "$startingTime",
-                    timezone: "Asia/Kolkata",
-                  },
-                },
-                0,
-                8,
-              ],
-            },
-          },
-        },
-        {
-          $addFields: {
-            endTime: {
-              $substr: [
-                {
-                  $dateToString: {
-                    format: "%H:%M:%S",
-                    date: "$closingTime",
-                    timezone: "Asia/Kolkata",
-                  },
-                },
-                0,
-                8,
-              ],
-            },
-          },
-        },
-        {
-          $skip: startIndex, // Skip documents based on the current page
-        },
-        {
-          $limit: limit, // Limit the number of documents per page
-        },
-        // {
-        //   $match: {
-        //     $or: [
-        //       {
-        //         batchName: "All Time",
-        //       },
-        //       {
-        //         $and: [
-        //           { startTime: { $lte: currentTime } },
-        //           { endTime: { $gte: currentTime } },
-        //         ],
-        //       },
-        //     ],
-        //   },
-        // },
-        {
-          $project: {
-            _id: 0,
-            dishes: 1,
-          },
-        },
-      ]);
-      console.log("batches :", batches);
-      let dishes = await batchModel.populate(batches, {
-        path: "dishes",
-        populate: [
-          {
-            path: "productCategory",
-            ref: CATEGORY,
-            select: "categoryName -_id",
-          },
-        ],
-      });
+
+
+      // var compareDate = moment("15/02/2013", "DD/MM/YYYY");
+      // var startDate = moment("12/01/2013", "DD/MM/YYYY");
+      // var endDate = moment("15/01/2013", "DD/MM/YYYY");
+
+      // // omitting the optional third parameter, 'units'
+      // compareDate.isBetween(startDate, endDate); //false in this case
+
+      const batch = await batchModel.find()
+      const currentBatch = batch.find(_batch => {
+
+        const _format = 'hh:mm:ss A';
+
+        // var time = moment() gives you current time. no format required.
+        const time = moment(moment().format('hh:mm:ss A'), _format);
+        const beforeTime = moment(moment(_batch.startingTime).format('hh:mm:ss A'), _format);
+        const afterTime = moment(moment(_batch.closingTime).format('hh:mm:ss A'), _format);
+        console.log("isBetween", time.isBetween(beforeTime, afterTime));
+        return time.isBetween(beforeTime, afterTime)
+
+      })
+      console.log("batchNew", currentBatch);
+      const _filterParams = {}
+      if (currentBatch) {
+        _filterParams.productBatch = currentBatch._id;
+      }
+      let products = await productModel
+        .find({ ..._filterParams })
+        .populate("productCategory")
+        .populate("productBatch")
+        .skip(skip) // Apply skip based on current page
+        .limit(limit) // Apply limit for the number of products per page
+        .exec();
+
+      // let productsSkip = await productModel
+      //   .find({ active: true }).skip(skip).limit(limit);
+      console.log("products", products);
+
+      // let batches = await batchModel.aggregate([
+
+
+
+      //   // {
+      //   //   $match: {
+      //   //     status: true,
+      //   //   },
+      //   // },
+      //   {
+      //     $addFields: {
+      //       startTime: {
+      //         $substr: [
+      //           {
+      //             $dateToString: {
+      //               format: "%H:%M:%S",
+      //               date: "$startingTime",
+      //               timezone: "Asia/Kolkata",
+      //             },
+      //           },
+      //           0,
+      //           8,
+      //         ],
+      //       },
+      //     },
+      //   },
+      //   {
+      //     $addFields: {
+      //       endTime: {
+      //         $substr: [
+      //           {
+      //             $dateToString: {
+      //               format: "%H:%M:%S",
+      //               date: "$closingTime",
+      //               timezone: "Asia/Kolkata",
+      //             },
+      //           },
+      //           0,
+      //           8,
+      //         ],
+      //       },
+      //     },
+      //   },
+      //   // {
+      //   //   $match: {
+      //   //     $or: [
+      //   //       {
+      //   //         batchName: "All Time",
+      //   //       },
+      //   //       {
+      //   //         $and: [
+      //   //           { startTime: { $lte: currentTime } },
+      //   //           { endTime: { $gte: currentTime } },
+      //   //         ],
+      //   //       },
+      //   //     ],
+      //   //   },
+      //   // },
+      //   {
+      //     $project: {
+      //       _id: 0,
+      //       dishes: 1,
+      //     },
+      //   },
+      //   {
+      //     $sort: { "dishes.updatedAt": -1 } // Sort dishes in descending order of updatedAt
+      //   },
+      //   {
+      //     $skip: skip // Skip the specified number of dishes based on current page
+      //   },
+      //   {
+      //     $limit: limit // Limit the number of products per page
+      //   }
+
+      // ])
+
+      // console.log("batches :", batches);
+      //User.countDocuments({ age: { $gte: 5 } }
+      const count = await productModel.countDocuments({ ..._filterParams })
+      console.log("count :", count);
+      // let dishes = await batchModel.populate(batches, {
+      //   path: "dishes",
+      //   match: { active: true }, // Filter dishes with active: true
+      //   populate: [
+      //     {
+      //       path: "productCategory",
+      //       ref: CATEGORY,
+      //       select: "categoryName -_id",
+      //     },
+      //   ],
+
+      // })
+
+      // let dishes = await batchModel.populate({
+      //   path: "dishes",
+      //   match: { active: true },
+      //   // sort: {
+      //   //   updatedAt: -1
+      //   // }, Filter dishes with active: true
+      //   populate: [
+      //     {
+      //       path: "productCategory",
+      //       ref: CATEGORY,
+      //       select: "categoryName -_id",
+      //     },
+      //   ],
+      //   // options: {
+      //   //   skip: skip, Skip the specified number of dishes based on current page
+      //   //   limit: limit  Limit the number of products per page
+      //   // },
+
+      // });
+
+      //  console.log("dishes length", dishes, dishes.length);
       let categories = await categoryModel.aggregate([
         {
           $addFields: {
@@ -185,23 +257,30 @@ module.exports = {
             categoryName: 1,
           },
         },
-      ]);
+      ])
+      console.log("categories", categories);
+      //const currentPage = page;
       const slider = await sliderModel.find();
       const offerBox = await offerBoxModel.find();
       let cartStatus = await cartModel.find({ user: userId });
       let cartDishCount = cartStatus[0]?.cartItems.length || 0;
+
       //console.log("categories and dish :", categories, dishes)
       if (userId) {
-        res.render("user/home", { dishes, categories, cartDishCount, slider, offerBox });
+        res.render("user/home", {
+          products, current: page, limit, pages: Math.ceil(count / limit), categories, cartDishCount, slider, offerBox
+        });
       } else {
         const body = { generatedOTP: null };
-        res.render("user/index", { body, dishes, slider, offerBox, categories });
+        res.render("user/index", { products, current: page, limit, pages: Math.ceil(count / limit), body, slider, offerBox, categories });
 
       }
 
     } catch (error) {
-      next(error);
+      console.error(error); // Log the error for debugging
+      res.status(500).send('Internal Server Error'); // Send a 500 response to the client
     }
+
   },
 
   postSignup: async (req, res, next) => {
@@ -400,6 +479,19 @@ module.exports = {
 
   getDishes: async (req, res, next) => {
     const currentTime = format(new Date(), "HH:mm:ss");
+    let limit = 8;
+    let page = req.query.page || 1;
+
+    // const page = parseInt(req.query.page) || 1;
+    // const limit = parseInt(req.query.limit) || 12;
+    const skip = (page - 1) * limit;
+    let products = await productModel
+      .find({})
+      .populate("productCategory")
+      .populate("productBatch")
+      .skip(skip) // Apply skip based on current page
+      .limit(limit) // Apply limit for the number of products per page
+      .exec();
     let batches = await batchModel.aggregate([
       {
         $match: {
@@ -461,7 +553,7 @@ module.exports = {
           dishes: 1,
         },
       },
-    ]);
+    ])
     let dishes = await batchModel.populate(batches, {
       path: "dishes",
       populate: [
@@ -497,9 +589,10 @@ module.exports = {
     ]);
     let filter = "All"
     const userId = req.session.userId;
+    const count = await productModel.count()
     let cartStatus = await cartModel.find({ user: userId });
     let cartDishCount = cartStatus[0]?.cartItems.length || 0;
-    res.render("user/dishes", { dishes, categories, cartDishCount, filter });
+    res.render("user/dishes", { dishes, products, current: page, pages: Math.ceil(count / limit), categories, cartDishCount, filter });
   },
 
   searchProduct: async (req, res, next) => {
@@ -1276,23 +1369,117 @@ module.exports = {
   },
 
   getOrders: async (req, res, next) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+    const skip = (page - 1) * limit;
     const userId = req.session.userId;
-    const orders = await orderModel.find({ userId: userId, isPlaced: true })
-      .populate("userId")
-      .populate(
-        {
-          path: "orderItems",
-          populate: {
-            path: "product"
+    try {
+
+
+      const orders = await orderModel.find({ userId: userId, isPlaced: true })
+        .populate({
+          path: "userId", // Populate the 'userId' field in the order document
+          select: "username email phoneNumber" // Select the fields you want to retrieve from the user document
+        }).populate({
+          path: "addressId", // Populate the 'userId' field in the order document
+          select: "flaNo street landmark district" // Select the fields you want to retrieve from the user document
+        })
+        .populate(
+          {
+            path: "orderItems",
+            populate: {
+              path: "product"
+            }
           }
+        )
+        .sort({ orderId: -1 })
+        .skip(skip) // Skip the specified number of orders based on current page
+        .limit(limit);
+      console.log('orders', orders);
+      // Perform a lookup to retrieve address details based on addressId
+      if (orders) {
+        // If userId and addressId are available in the order
+        var addressDetails = await addressModel.findOne({ _id: orders[2].addressId });
+        if (addressDetails) {
+          // Address details found, you can access them using addressDetails object
+          console.log('Address Details:', addressDetails);
+        } else {
+          console.log('Address details not found.');
         }
-      )
-      .sort({ orderId: -1 });
-    let cartStatus = await cartModel.find({ user: userId });
-    let cartDishCount = cartStatus[0]?.cartItems.length || 0;
-    res.render("user/orders", { orders, cartDishCount });
+      } else {
+        console.log('User or address details not found in the order.');
+      }
+
+      const totalOrders = await orderModel.find({ userId: userId, isPlaced: true }).count();
+      console.log("totalOrders", totalOrders);
+      let cartStatus = await cartModel.find({ user: userId });
+      let cartDishCount = cartStatus[0]?.cartItems.length || 0;
+      res.render("user/orders", {
+        orders, user: orders[1].userId, address: orders[2].addressId, cartDishCount, current: page,
+        pages: Math.ceil(totalOrders / limit),
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
   },
 
+  getOrderDetails: async (req, res, next) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+    const skip = (page - 1) * limit;
+    const userId = req.session.userId;
+    try {
+
+
+      const orders = await orderModel.find({ userId: userId, isPlaced: true })
+        .populate({
+          path: "userId", // Populate the 'userId' field in the order document
+          select: "username email phoneNumber address" // Select the fields you want to retrieve from the user document
+        })
+        .populate(
+          {
+            path: "orderItems",
+            populate: {
+              path: "product"
+            }
+          }
+        )
+        .sort({ orderId: -1 })
+        .skip(skip) // Skip the specified number of orders based on current page
+        .limit(limit);
+      const totalOrders = await orderModel.find({ userId: userId, isPlaced: true }).count();
+      console.log("totalOrders", totalOrders);
+      let cartStatus = await cartModel.find({ user: userId });
+      let cartDishCount = cartStatus[0]?.cartItems.length || 0;
+      res.render("user/orderDetails", {
+        orders, user: orders[1].userId, cartDishCount, current: page,
+        pages: Math.ceil(totalOrders / limit),
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+    // const userId = req.session.userId;
+    // try {
+
+
+    //   const orderId = req.params.orderId;
+
+    //   // Fetch order details based on orderId (implement this logic)
+    //   const order = await orderModel.findOne({ _id: orderId }).populate('userId').populate('addressId').populate('orderItems.product');
+    //   console.log("order", order)
+    //   if (!order) {
+    //     return res.status(404).send('Order not found');
+    //   }
+    //   let cartStatus = await cartModel.find({ user: userId });
+    //   let cartDishCount = cartStatus[0]?.cartItems.length || 0;
+    //   res.render('user/orderDetails', { order: order, cartDishCount });
+    // } catch (error) {
+    //   console.error(error);
+    //   res.status(500).send('Internal Server Error');
+    // }
+  },
   getProfile: async (req, res, next) => {
     const userId = req.session.userId;
     const user = await userModel.findById(userId).populate("address")
@@ -1381,6 +1568,13 @@ module.exports = {
         // Update order status to 'cancelled'
         if (user) {
           if (order.paymentMethod === PaymentMethod.ONLINE || order.paymentMethod === PaymentMethod.WALLET) {
+            let walletData = {
+              transactionType: 'Credited',
+              amount: order.billAmount
+            }
+
+            user.wallets = [...user.wallets, walletData];
+            console.log("walletData and wallets", walletData, user.wallets)
             // Update wallet balance by adding the cancelled order's amount
             user.walletBalance += order.billAmount;
           }
@@ -1402,6 +1596,7 @@ module.exports = {
       console.error(error);
       res.status(500).json({ success: false, message: 'Failed to cancel the order. Please try again.' });
     }
+
 
   }
 }

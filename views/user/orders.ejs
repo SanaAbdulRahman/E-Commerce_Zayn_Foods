@@ -36,6 +36,9 @@
 	<link rel="stylesheet" type="text/css" href="stylesheets/main.css">
 	<link rel="stylesheet" href="stylesheets/style.css">
 
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+		integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
 </head>
 
 <body class="animsition">
@@ -93,10 +96,22 @@
 							data-notify="<%= cartDishCount %>">
 							<i class="zmdi zmdi-shopping-cart"></i>
 						</a>
-						<a href="/myprofile"
+						<!-- <a href="/myprofile"
 							class="icon-header-item cl2 hov-cl1 trans-04 p-r-10 p-l-10 js-show-myaccount">
 							<i class="zmdi zmdi-account"></i>
-						</a>
+						</a> -->
+						<div class="dropdown">
+							<a href="#" class="icon-header-item cl2 hov-cl1 trans-04 p-r-10 p-l-22 dropdown-toggle"
+								id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i class="zmdi zmdi-account"></i>
+							</a>
+							<div class="dropdown-menu" aria-labelledby="profileDropdown">
+								<a class="dropdown-item" href="/myprofile">My Profile</a>
+								<!-- <a class="dropdown-item" href="/settings">Settings</a> -->
+								<div class="dropdown-divider"></div>
+								<a class="dropdown-item" href="/getSignout">Logout</a>
+							</div>
+						</div>
 					</div>
 				</nav>
 			</div>
@@ -154,7 +169,7 @@
 	</header>
 
 	<!-- My Account-->
-	<div class="wrap-header-myaccount js-panel-myaccount">
+	<!-- <div class="wrap-header-myaccount js-panel-myaccount">
 		<div class="s-full js-hide-cart"></div>
 
 		<div class="header-myaccount flex-col-l p-l-65 p-r-25">
@@ -219,7 +234,7 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div> -->
 
 	<!-- Forgot Password-->
 	<div class="wrap-header-myaccount js-panel-resetPassword">
@@ -360,188 +375,344 @@
 		</div>
 	</div>
 
+	<!-- OrdersNew -->
+
+	<div class="container">
+		<div class="row" style="text-align: center;">
+			<!-- <div class="col-md-9 " id="orders" style="display: block;">
+				<div class="row" style="text-align: center;"> -->
+			<h1>Orders</h1>
+
+			<% if(orders && orders.length>0){ %>
+				<table class="table table-bordered text-center">
+					<thead class="bg-secondary text-dark">
+						<tr>
+							<th>Order #</th>
+							<th>Billing Name & Address</th>
+							<th>Order Total</th>
+							<th>Date</th>
+							<th>Payment Method</th>
+							<th>Order Status</th>
+							<th>Actions</th>
+							<th>Details</th>
+
+						</tr>
+					</thead>
+
+					<tbody class="align-middle">
+						<% orders.forEach((order)=> { %>
+
+							<tr>
+								<td class="align-middle">
+
+									<%= order.orderId %>
+								</td>
+								<td class="align-middle">
+									<% if (order.userId) { %>
+										<%= `${order.userId.username || 'N/A' },${order.addressId.flatNo || 'N/A' },
+											${order.addressId.street || 'N/A' }, ${order.addressId.landmark || 'N/A' },
+											${order.addressId.district || 'N/A' }` %>
+											<% } else { %>
+												N/A
+												<% } %>
+								</td>
+								<td class="align-middle">
+									<%= order.billAmount %>
+								</td>
+								<td class="align-middle">
+									<% const rawDate=new Date(order.createdAt); %>
+										<% const year=rawDate.getFullYear(); %>
+											<% const month=String(rawDate.getMonth() + 1).padStart(2, '0' ); %>
+												<% const day=String(rawDate.getDate()).padStart(2, '0' ); %>
+													<%= `${day}-${month}-${year}` %>
+								</td>
+
+								<td class="align-middle">
+									<%= order.paymentMethod %>
+								</td>
+								<td class="align-middle">
+									<%= order.orderStatus %>
+								</td>
+								<td class="align-middle">
+									<%if(order.orderStatus !=="delivered" && order.orderStatus!=="cancelRequest" &&
+										order.orderStatus!=="cancelled" ){%>
+										<button class=" btn btn-danger"
+											onclick=" orderCancel('<%=order.orderId%>',event)">Cancel</button>
+										<%} %>
 
 
-	<!-- Orders -->
-	<form class="bg0 p-t-75 p-b-85">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-12 m-lr-auto m-b-50">
-					<div class="m-l-25 m-r--38 m-lr-0-xl">
-						<div class="wrap-table-shopping-cart">
-							<table class="table-shopping-cart">
-								<tr class="table_head">
-									<th class="column-1">orderId</th>
-									<th class="column-2">Order Items</th>
-									<th class="column-3">Payment Status</th>
-									<th class="column-4">Bill Amount</th>
-									<th class="column-5">Status</th>
-									<th class="column-6">Action</th>
-								</tr>
-								<% orders.forEach((order)=> { %>
-									<tr class="table_row"">
-										<td class=" column-1" style="width: 20%;">
-										<%=order.orderId%>
-											</td>
-											<td class="column-2" style="width: 40% ; white-space: nowrap;">
-												<% for(let i=0; i < order.orderItems.length; i++) { %>
-													<div class="how-itemcart1-1 p-b-5 p-t-5">
-														<div style="display: flex; justify-content: space-between;">
-															<img src="<%=order.orderItems[i].product.productImage1%>"
-																alt="IMG">
-															<span class="p-l-30">
-																<%=order.orderItems[i].product.productName%>, <br>Qty:
-																	<%=order.orderItems[i].quantity%>
-															</span>
-														</div>
+								</td>
+
+								<td class="align-middle">
+									<button class="btn" data-toggle="modal" data-target="#detail<%= order._id %>">
+										View
+									</button>
+									<!-- view details -->
+
+									<div class="modal fade" id="detail<%= order._id %>" tabindex="-1" role="dialog"
+										aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+										<div class="modal-dialog modal-dialog-centered" role="document">
+
+
+
+
+											<div class=" modal-content">
+												<div class="modal-header text-center">
+													<h5 class="modal-title" id="statusModalLabel" style="color: black;">
+														OrderId - <%=order.orderId %>
+													</h5>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body">
+													<table>
+														<tr class="table_head">
+
+															<th class="column-2">Order Items</th>
+															<th class="column-3">Bill Amount</th>
+															<th class="column-4">Date</th>
+															<th class="column-5">Payment Status</th>
+
+														</tr>
+
+														<tr>
+
+															<td class="column-2"
+																style="width: 40% ; white-space: nowrap;">
+																<% for(let i=0; i < order.orderItems.length; i++) { %>
+																	<div class="how-itemcart1-1 p-b-5 p-t-5">
+																		<div
+																			style=" display: flex; justify-content: space-between;">
+																			<img style="height: 20px;width: 20px;"
+																				src="<%=order.orderItems[i].product.productImage1%>"
+																				alt="IMG">
+																			<span class="p-l-25">
+																				<%=order.orderItems[i].product.productName%>
+																					, <br>Qty:
+																					<%=order.orderItems[i].quantity%>
+																			</span>
+																		</div>
+																	</div>
+																	<% } %>
+															</td>
+
+															<td>
+																<%=order.billAmount%>
+															</td>
+															<td>
+																<%= `${day}-${month}-${year}` %>
+															</td>
+															<td>
+																<%=order.paymentMethod%><br>
+																	<%=order.paymentStatus%>
+															</td>
+
+														</tr>
+
+													</table>
+
+													<div class="modal-footer">
+														<button type="button" class="btn btn-secondary"
+															data-dismiss="modal" style="color: black;">Close</button>
+
 													</div>
-													<% } %>
-											</td>
-											<td class="column-3">
-												<%=order.paymentMethod%><br>
-													<%=order.paymentStatus%>
-											</td>
-											<td class="column-4">
-												<%=order.billAmount%>
-											</td>
-											<td class="column-5">
-												<%if(order.orderStatus=="delivered" ){%>
-													<p class="cl12">
-														<%=order.orderStatus%>
-													</p>
-													<%} else if(order.orderStatus=="cancelled" ){ %>
-														<p class="cl1">
-															<%=order.orderStatus%>
-														</p>
-														<%} else{ %>
-															<p class="cl2">
-																<%=order.orderStatus%>
-															</p>
-															<%} %>
-											</td>
-											<td class="column-6">
-												<%if(order.orderStatus !=="delivered" &&
-													order.orderStatus!=="cancelRequest" &&
-													order.orderStatus!=="cancelled" ){%>
-													<button class="btn btn-danger m-4"
-														onclick="orderCancel('<%=order.orderId%>',event)">Cancel</button>
-													<%} %>
-											</td>
-									</tr>
-									<% })%>
-							</table>
+												</div>
+
+
+											</div>
+										</div>
+									</div>
+
+								</td>
+
+							</tr>
+
+							<% }) %>
+
+					</tbody>
+
+				</table>
+		</div>
+	</div>
+
+	<% }else{ %>
+		<div class="card-body">
+			<h4>No order data found</h4>
+		</div>
+		<% } %>
+
+			<!--  pagination -->
+			<% if (orders.length>0) { %>
+				<nav aria-label="Dashboard Pagination">
+					<ul class="pagination justify-content-center mt-5">
+						<% if (current==1) { %>
+							<li class="page-item disabled"><a href="#" class="page-link">First</a>
+							</li>
+
+							<% } else {%>
+								<li class="page-item"><a href="/orders?page=1" class="page-link">First</a>
+								</li>
+								<% } %>
+									<% var i=(Number(current)>3 ? Number(current)-2 :1)%>
+										<% if (i!==1) { %>
+											<li class="page-item disabled"><a href="#" class="page-link">...</a>
+											</li>
+											<% } %>
+												<% for(; i<=Number(current)+2 && i<=pages;i++){ %>
+													<% if (i==current) { %>
+														<li class="page-item disabled"><a href="#" class="page-link">
+																<%= i %>
+															</a></li>
+														<% } else {%>
+															<li class="page-item"><a href="/orders?page=<%= i %>"
+																	class="page-link">
+																	<%= i %>
+																</a></li>
+															<% } %>
+																<% if (i==Number(current)+2 && i<pages) { %>
+																	<li class="page-item disabled">
+																		<a href="#" class="page-link">
+																			...
+																		</a>
+																	</li>
+																	<% } %>
+
+																		<% } %>
+
+																			<% if (current==pages) { %>
+																				<li class="page-item disabled">
+																					<a href="#"
+																						class="page-link">Last</a>
+																				</li>
+
+																				<% } else {%>
+																					<li class="page-item">
+																						<a href="/orders?page=<%= pages %>"
+																							class="page-link">Last</a>
+																					</li>
+																					<% } %>
+
+					</ul>
+				</nav>
+
+				<% } %>
+
+
+
+					<!-- Footer -->
+					<%- include('../partials/footer.ejs')%>
+
+
+						<!-- Back to top -->
+						<div class="btn-back-to-top" id="myBtn">
+							<span class="symbol-btn-back-to-top">
+								<i class="zmdi zmdi-chevron-up"></i>
+							</span>
 						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</form>
-
-	<!-- Footer -->
-	<%- include('../partials/footer.ejs')%>
 
 
-		<!-- Back to top -->
-		<div class="btn-back-to-top" id="myBtn">
-			<span class="symbol-btn-back-to-top">
-				<i class="zmdi zmdi-chevron-up"></i>
-			</span>
-		</div>
+						<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
 
+						<script src="vendor/animsition/js/animsition.min.js"></script>
 
-		<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+						<script src="vendor/bootstrap/js/popper.js"></script>
+						<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 
-		<script src="vendor/animsition/js/animsition.min.js"></script>
+						<script src="vendor/select2/select2.min.js"></script>
+						<script>
+							$(".js-select2").each(function () {
+								$(this).select2({
+									minimumResultsForSearch: 20,
+									dropdownParent: $(this).next('.dropDownSelect2')
+								});
+							})
+						</script>
 
-		<script src="vendor/bootstrap/js/popper.js"></script>
-		<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+						<script src="vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
 
-		<script src="vendor/select2/select2.min.js"></script>
-		<script>
-			$(".js-select2").each(function () {
-				$(this).select2({
-					minimumResultsForSearch: 20,
-					dropdownParent: $(this).next('.dropDownSelect2')
-				});
-			})
-		</script>
+						<script src="vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+						<script>
+							$('.js-pscroll').each(function () {
+								$(this).css('position', 'relative');
+								$(this).css('overflow', 'hidden');
+								var ps = new PerfectScrollbar(this, {
+									wheelSpeed: 1,
+									scrollingThreshold: 1000,
+									wheelPropagation: false,
+								});
 
-		<script src="vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
+								$(window).on('resize', function () {
+									ps.update();
+								})
+							});
+						</script>
 
-		<script src="vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-		<script>
-			$('.js-pscroll').each(function () {
-				$(this).css('position', 'relative');
-				$(this).css('overflow', 'hidden');
-				var ps = new PerfectScrollbar(this, {
-					wheelSpeed: 1,
-					scrollingThreshold: 1000,
-					wheelPropagation: false,
-				});
+						<script src="js/main.js"></script>
+						<!-- Add this script to your HTML file -->
+						<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-				$(window).on('resize', function () {
-					ps.update();
-				})
-			});
-		</script>
+						<script>
+							// Function to cancel the order via AJAX
+							function orderCancel(orderId, event) {
+								event.preventDefault();
+								swal({
+									title: "Are you sure?",
+									text: "You want to cancel this order..?",
+									icon: "warning",
+									buttons: [
+										'No',
+										'Yes'
+									],
+									dangerMode: true,
+								}).then(function (isConfirm) {
+									console.log("swalisConfirm :", isConfirm);
+									if (isConfirm) {
+										$.ajax({
+											type: 'POST',
+											url: '/cancelOrder', // Replace this with the actual API endpoint for cancelling orders
+											data: {
+												orderId: orderId
+											},
+											success: function (response) {
+												// Check the response from the server
+												if (response.success) {
+													// Update the order status in the table to "cancelled"
+													var row = $('td:contains(' + orderId + ')').closest('tr');
+													row.find('.column-5').html('<p style="color:red" class="cl1">Cancelled</p>');
+													location.reload();
+													// Optionally, you can show a success message to the user
 
-		<script src="js/main.js"></script>
-		<!-- Add this script to your HTML file -->
-		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+													alert('Order has been cancelled successfully!');
 
-		<script>
-			// Function to cancel the order via AJAX
-			function orderCancel(orderId, event) {
-				event.preventDefault();
-				swal({
-					title: "Are you sure?",
-					text: "You want to cancel this order..?",
-					icon: "warning",
-					buttons: [
-						'No',
-						'Yes'
-					],
-					dangerMode: true,
-				}).then(function (isConfirm) {
-					console.log("swalisConfirm :", isConfirm);
-					if (isConfirm) {
-						$.ajax({
-							type: 'POST',
-							url: '/cancelOrder', // Replace this with the actual API endpoint for cancelling orders
-							data: {
-								orderId: orderId
-							},
-							success: function (response) {
-								// Check the response from the server
-								if (response.success) {
-									// Update the order status in the table to "cancelled"
-									var row = $('td:contains(' + orderId + ')').closest('tr');
-									row.find('.column-5').html('<p class="cl1">cancelled</p>');
-									location.reload();
-									// Optionally, you can show a success message to the user
-
-									alert('Order has been cancelled successfully!');
-
-								} else {
-									// Optionally, you can show an error message to the user
-									alert('Failed to cancel the order. Please try again.');
-								}
-							},
-							error: function (xhr, status, error) {
-								// Handle errors if the AJAX request fails
-								console.error(xhr.responseText);
-								alert('Failed to cancel the order. Please try again.');
+												} else {
+													// Optionally, you can show an error message to the user
+													alert('Failed to cancel the order. Please try again.');
+												}
+											},
+											error: function (xhr, status, error) {
+												// Handle errors if the AJAX request fails
+												console.error(xhr.responseText);
+												alert('Failed to cancel the order. Please try again.');
+											}
+										});
+									}
+								});
+								console.log("orderId", orderId);
+								// Send an AJAX request to cancel the order
+								//
 							}
-						});
-					}
-				});
-				console.log("orderId", orderId);
-				// Send an AJAX request to cancel the order
-				//
-			}
-		</script>
-		<script src="vendor/sweetalert/sweetalert.min.js"></script>
+						</script>
+						<script>
+							$('button[data-toggle="modal"]').click(function () {
+								$('#myModal').modal('show');
+							});</script>
+						<script src="vendor/sweetalert/sweetalert.min.js"></script>
 
+						<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+							integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+							crossorigin="anonymous"></script>
 </body>
 
 </html>

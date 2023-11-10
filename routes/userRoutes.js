@@ -63,6 +63,7 @@ router.post("/confirmOrder", session.verifyUser, userController.confirmOrder);
 router.get("/orderConfirmed", session.verifyUser, userController.orderConfirmed);
 
 router.get('/orders', session.verifyUser, userController.getOrders);
+router.get('/orderDetails', session.verifyUser, userController.getOrderDetails)
 
 router.get('/myprofile', session.verifyUser, userController.getProfile);
 

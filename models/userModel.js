@@ -35,6 +35,14 @@ let userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    wallets: [{
+      transactionType: String,
+      amount: Number,
+      date: {
+        type: Date,
+        default: Date.now
+      }
+    }],
     walletBalance: {
       type: Number,
       default: 0, // Set the default wallet balance to 0

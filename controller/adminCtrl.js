@@ -25,18 +25,18 @@ module.exports = {
         }
       ]);
       const revenueByMonth = {
-        jan : "",
-        feb : "",
-        mar : "",
-        apr : "",
-        may : "",
-        jun : "",
-        jul : "",
-        aug : "",
-        sep : "",
-        oct : "",
-        nov : "",
-        dec : ""
+        jan: "",
+        feb: "",
+        mar: "",
+        apr: "",
+        may: "",
+        jun: "",
+        jul: "",
+        aug: "",
+        sep: "",
+        oct: "",
+        nov: "",
+        dec: ""
       };
       let totalRevenue = 0;
       let totalSales = 0;
@@ -59,7 +59,7 @@ module.exports = {
         userCount,
         productCount
       }
-      res.render("admin/admin", {dashboardData, revenueByMonth});
+      res.render("admin/admin", { dashboardData, revenueByMonth });
     } catch (error) {
       next(error)
     }
@@ -382,7 +382,7 @@ module.exports = {
   activeProduct: async (req, res, next) => {
     try {
       const id = req.query.id;
-      await productModel.updateOne({ _id: id }, { $set: { active: true } });
+      await productModel.updateOne({ _id: id }, { $set: { active: false } });
       res.redirect("../admin/adminDishes");
     } catch (error) {
       next(error)
@@ -392,7 +392,7 @@ module.exports = {
   activeFalseProduct: async (req, res, next) => {
     try {
       const id = req.query.id;
-      await productModel.updateOne({ _id: id }, { $set: { active: false } });
+      await productModel.updateOne({ _id: id }, { $set: { active: true } });
       res.redirect("../admin/adminDishes");
     } catch (error) {
       next(error)

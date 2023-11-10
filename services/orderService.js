@@ -135,6 +135,12 @@ const confirmOrder = async (orderId, paymentMethod, req) => {
           if (user.walletBalance >= orderTotal) {
             // Deduct the amount from the wallet balance
             user.walletBalance -= orderTotal;
+            let walletData = {
+              transactionType: 'Debited',
+              amount: orderTotal
+            }
+            user.wallets = [...user.wallets, walletData]
+            console.log("Wallets", user.wallets);
             await user.save();
 
             // Proceed with order confirmation
@@ -276,7 +282,7 @@ const updateConfirmOrder = async (orderId) => {
             console.log(err, 'Error in COD');
             reject({ success: false, paymentMethod: COD, message: err });
           });
-      } else {
+      } else if (order.paymentMethod === ONLINE) {
         await updateConfirmOrderForOnline(orderId, userId)
           .then((response) => {
             resolve({ success: true, paymentMethod: ONLINE, message: `Online: Successfully placed Order for ${orderId}` });
@@ -284,6 +290,16 @@ const updateConfirmOrder = async (orderId) => {
           .catch(err => {
             console.log(err, 'Error in Online');
             reject({ success: false, paymentMethod: ONLINE, message: err });
+          });
+      }
+      else if (order.paymentMethod === WALLET) {
+        await updateConfirmOrderForWallet(orderId, userId)
+          .then((response) => {
+            resolve({ success: true, paymentMethod: WALLET, message: `Wallet: Successfully placed Order for ${orderId}` });
+          })
+          .catch(err => {
+            console.log(err, 'Error in Online');
+            reject({ success: false, paymentMethod: WALLET, message: err });
           });
       }
     } catch (err) {
@@ -409,6 +425,25 @@ const updateConfirmOrderForOnline = (orderId, userId) => {
       reject(err)
     }
   })
+}
+const updateConfirmOrderForWallet = (orderId, userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const newData = {
+        isPlaced: true,
+        paymentStatus: 'PAID' // Assuming 'PAID' is the status for successful wallet payments
+      };
+
+      // Update order in success scenario (similar to updateOrderInSuccessScenario function)
+      await updateOrderInSuccessScenario({ orderId, newData, userId })
+        .then(updateCouponIfApplied)
+        .then(emptyCart)
+        .then((response) => resolve("Payment Success")) // You can customize the success message if needed
+        .catch((err) => reject(err));
+    } catch (err) {
+      reject(err);
+    }
+  });
 }
 
 // const getCashFreeOrderStatus = (orderId, userId) => {

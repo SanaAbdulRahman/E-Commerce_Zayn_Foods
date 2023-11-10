@@ -147,7 +147,7 @@
     });
   });
 
-  var mymail= "vajidmohammed94@gmail.com";
+  var mymail = "vajidmohammed94@gmail.com";
 
   var isotopeButton = $(".filter-tope-group button");
 
@@ -213,15 +213,15 @@
   });
 
 
-    // OTP
-    // $(".js-show-otp").on("click", function () {
-    //   $(".js-panel-otp").addClass("show-header-myaccount");
-    // });
-    // $(".js-hide-otp").on("click", function () {
-    //   $(".js-panel-otp").removeClass("show-header-myaccount");
-    // });
+  // OTP
+  // $(".js-show-otp").on("click", function () {
+  //   $(".js-panel-otp").addClass("show-header-myaccount");
+  // });
+  // $(".js-hide-otp").on("click", function () {
+  //   $(".js-panel-otp").removeClass("show-header-myaccount");
+  // });
 
-  
+
   // Edit info
   $(".js-show-editInfo").on("click", function () {
     $(".js-panel-editInfo").addClass("show-header-myaccount");
@@ -230,22 +230,30 @@
     $(".js-panel-editInfo").removeClass("show-header-myaccount");
   });
 
+  // Wallet info
+  $(".js-show-walletInfo").on("click", function () {
+    $(".js-panel-walletInfo").addClass("show-header-myaccount");
+  });
+  $(".js-hide-walletInfo").on("click", function () {
+    $(".js-panel-walletInfo").removeClass("show-header-myaccount");
+  });
 
-    // Forgotpassword
-    $(".js-show-resetPassword").on("click", function () {
-      $(".js-panel-resetPassword").addClass("show-header-myaccount");
-    });
-    $(".js-hide-resetPassword").on("click", function () {
-      $(".js-panel-resetPassword").removeClass("show-header-myaccount");
-    });
 
-    // Forgot password method 2
-    $(".js-show-resetPasswordStep2").on("click", function () {
-      $(".js-panel-resetPasswordStep2").addClass("show-header-myaccount");
-    });
-    $(".js-hide-resetPasswordStep2").on("click", function () {
-      $(".js-panel-resetPasswordStep2").removeClass("show-header-myaccount");
-    });
+  // Forgotpassword
+  $(".js-show-resetPassword").on("click", function () {
+    $(".js-panel-resetPassword").addClass("show-header-myaccount");
+  });
+  $(".js-hide-resetPassword").on("click", function () {
+    $(".js-panel-resetPassword").removeClass("show-header-myaccount");
+  });
+
+  // Forgot password method 2
+  $(".js-show-resetPasswordStep2").on("click", function () {
+    $(".js-panel-resetPasswordStep2").addClass("show-header-myaccount");
+  });
+  $(".js-hide-resetPasswordStep2").on("click", function () {
+    $(".js-panel-resetPasswordStep2").removeClass("show-header-myaccount");
+  });
 
   /*==================================================================
     [ +/- num product ]*/
