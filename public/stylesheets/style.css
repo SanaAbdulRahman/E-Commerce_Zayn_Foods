@@ -1,5 +1,5 @@
 .fh-primary-cl {
-  background-color: #B31C2A;
+  background-color: #727272;
   ;
 }
 
@@ -436,10 +436,12 @@
   min-width: 185px;
   height: 45px;
 }
+
 .size-115-2 {
   min-width: 385px;
   height: 45px;
 }
+
 .size-115-1 {
   min-width: 60px;
   height: 45px;

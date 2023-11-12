@@ -11765,6 +11765,7 @@ a:focus {
   .sidebar .nav-item .nav-link span {
     font-size: 0.85rem;
     display: inline;
+
   }
 
   .sidebar .nav-item .nav-link[data-toggle="collapse"]::after {
@@ -12817,7 +12818,7 @@ body.sidebar-toggled footer.sticky-footer {
   display: block;
   font-family: Poppins-Regular;
   font-size: 14px;
-  color: #555;
+  color: #e74a3b;
   line-height: 1.3;
 }
 

@@ -479,19 +479,6 @@ module.exports = {
 
   getDishes: async (req, res, next) => {
     const currentTime = format(new Date(), "HH:mm:ss");
-    let limit = 8;
-    let page = req.query.page || 1;
-
-    // const page = parseInt(req.query.page) || 1;
-    // const limit = parseInt(req.query.limit) || 12;
-    const skip = (page - 1) * limit;
-    let products = await productModel
-      .find({})
-      .populate("productCategory")
-      .populate("productBatch")
-      .skip(skip) // Apply skip based on current page
-      .limit(limit) // Apply limit for the number of products per page
-      .exec();
     let batches = await batchModel.aggregate([
       {
         $match: {
@@ -553,7 +540,7 @@ module.exports = {
           dishes: 1,
         },
       },
-    ])
+    ]);
     let dishes = await batchModel.populate(batches, {
       path: "dishes",
       populate: [
@@ -589,10 +576,9 @@ module.exports = {
     ]);
     let filter = "All"
     const userId = req.session.userId;
-    const count = await productModel.count()
     let cartStatus = await cartModel.find({ user: userId });
     let cartDishCount = cartStatus[0]?.cartItems.length || 0;
-    res.render("user/dishes", { dishes, products, current: page, pages: Math.ceil(count / limit), categories, cartDishCount, filter });
+    res.render("user/dishes", { dishes, categories, cartDishCount, filter });
   },
 
   searchProduct: async (req, res, next) => {

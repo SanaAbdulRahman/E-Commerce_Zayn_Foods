@@ -1,4 +1,4 @@
-const express = require ('express');
+const express = require('express');
 const adminController = require('../controller/adminCtrl');
 const upload = require("../middlewares/uploadImages")
 const session = require('../middlewares/session');
@@ -12,17 +12,22 @@ router.post('/postAdminLogin', adminController.postAdminLogin);
 
 router.get('/getAdminSignout', session.verifyAdmin, adminController.getAdminSignout);
 
-router.get('/getDashboardData', adminController.getDashboardData);
+router.get('/getDashboardData', adminController.loadDashboard);
+
+router.get('/getMonthlySales', adminController.getMonthlySales);
+
+router.get('/getCategorySales', adminController.getCategorySales);
+
 
 router.get('/getBannerMangement', adminController.getBannerMangement);
 
 router.get("/getAddSlider", session.verifyAdmin, adminController.getAddSlideBanner);
 
-router.post("/postAddSlider", session.verifyAdmin, uploadSingle,  adminController.postAddSlideBanner);
+router.post("/postAddSlider", session.verifyAdmin, uploadSingle, adminController.postAddSlideBanner);
 
 router.get("/getEditSlider", session.verifyAdmin, adminController.getEditSlideBanner);
 
-router.post("/postEditSlider", session.verifyAdmin, uploadSingle,  adminController.postEditSlideBanner);
+router.post("/postEditSlider", session.verifyAdmin, uploadSingle, adminController.postEditSlideBanner);
 
 router.get('/removeSlider', session.verifyAdmin, adminController.removeSlider);
 
@@ -50,7 +55,7 @@ router.post("/postAddProduct", upload, adminController.postAddProduct);
 
 router.get('/getEditProducts', session.verifyAdmin, adminController.getEditProducts);
 
-router.post('/postEditProduct',upload, adminController.postEditProducts);
+router.post('/postEditProduct', upload, adminController.postEditProducts);
 
 router.get('/activeProduct', session.verifyAdmin, adminController.activeProduct);
 
@@ -80,7 +85,7 @@ router.get('/orderDelivered', session.verifyAdmin, adminController.OrderDelivere
 
 router.get('/getCouponManagement', session.verifyAdmin, adminController.getCouponManagement);
 
-router.get('/getAddCoupon' , session.verifyAdmin, adminController.getAddCoupon);
+router.get('/getAddCoupon', session.verifyAdmin, adminController.getAddCoupon);
 
 router.post('/postAddCoupon', adminController.postAddCoupon)
 
@@ -106,5 +111,8 @@ router.get('/getActiveBatch', session.verifyAdmin, adminController.getActiveBatc
 
 router.get('/getDeactivateBatch', session.verifyAdmin, adminController.getDeactivateBatch);
 
+router.get('/viewSalesReport', session.verifyAdmin, adminController.viewSalesReport);
+
+router.post('/getOrdersByDate', session.verifyAdmin, adminController.getSalesReport);
 
 module.exports = router;

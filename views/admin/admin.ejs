@@ -22,6 +22,28 @@
     <!-- Custom styles -->
     <link rel="stylesheet" href="../../stylesheets/admin.css">
     <link rel="stylesheet" href="../../stylesheets/style.css">
+
+    <style>
+        .chartDonutCard {
+            width: 100%;
+            border: none;
+        }
+
+        .img-class {
+            max-height: 400px;
+        }
+
+        .a-title {
+            text-decoration: none;
+            margin-left: 50px;
+            color: rgb(66, 182, 105);
+            ;
+        }
+    </style>
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+
 </head>
 
 <body id="page-top animsition">
@@ -155,27 +177,75 @@
                             </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col-lg-6">
+
+                                <div class="card shadow mb-4 chartBarCard">
+                                    <div
+                                        class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold cl1">Monthly Sales</h6>
+                                    </div>
+                                    <div class="card-body">
+
+                                        <canvas id="myBarChart" style="width: 100%; "></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card shadow mb-4 chartDonutCard">
+                                    <div
+                                        class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold cl1">Category Sales</h6>
+                                    </div>
+
+                                    <div class="card-body"> <canvas id="myPieChart" style="width: 100%; "></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
                         <!-- Chart row -->
+
                         <div class="row">
 
                             <!-- Area Chart -->
-                            <div class="col-xl-12 col-lg-12">
+
+                            <div class="col-lg-12">
                                 <div class="card shadow mb-4">
+
                                     <!-- Card Header - Dropdown -->
+
                                     <div
                                         class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                         <h6 class="m-0 font-weight-bold cl1">Revenue Overview</h6>
                                     </div>
+
                                     <!-- Card Body -->
+
                                     <div class="card-body">
                                         <div class="chart-area">
                                             <canvas id="myAreaChart"></canvas>
                                         </div>
                                     </div>
                                 </div>
+                                <!-- <div class="col-lg-6">
+                                    <div class="card card-body mb-4 chartDonutCard">
+                                        <canvas id="donutChart" style="width: 60%; "></canvas>
+                                    </div>
+                                </div> -->
                             </div>
 
                         </div>
+
+
+                        <!-- Bar Chart Container -->
+                        <!-- Donut Chart Container -->
+
+
+
+
 
                     </div>
                     <!-- /.container-fluid -->
@@ -216,7 +286,9 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current
+                    session.
+                </div>
                 <div class="modal-footer">
                     <button class="btn btn-light" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-danger" href="../admin/getAdminSignout">Logout</a>
@@ -227,7 +299,7 @@
 
     <script>
         let revenueByMonth = {
-            jan: "<%=revenueByMonth.jan%>" ,
+            jan: "<%=revenueByMonth.jan%>",
             feb: "<%=revenueByMonth.feb%>",
             mar: "<%=revenueByMonth.mar%>",
             apr: "<%=revenueByMonth.apr%>",
@@ -238,7 +310,7 @@
             sep: "<%=revenueByMonth.sep%>",
             oct: "<%=revenueByMonth.oct%>",
             nov: "<%=revenueByMonth.nov%>",
-            dec:"<%=revenueByMonth.dec%>"
+            dec: "<%=revenueByMonth.dec%>"
         }
     </script>
 
@@ -255,9 +327,102 @@
     <!-- Page level plugins -->
     <script src="../../vendor/chart.js/Chart.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"
+        integrity="sha512-CryKbMe7sjSCDPl18jtJI5DR5jtkUWxPXWaLCst6QjH8wxDexfRJic2WRmRXmstr2Y8SxDDWuBO6CQC6IE4KTA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <!-- Page level custom scripts -->
     <script src="../../js/demo/chart-area-demo.js"></script>
     <script src="../../js/demo/chart-pie-demo.js"></script>
+    <script src="../../js/demo/chart-bar-demo.js"></script>
+
+
+
+    <!-- <script>
+        function chartLoad() {
+
+            console.log("monthlySales", monthlySales);
+            console.log("categorySales", monthlySales);
+
+
+            const datas = JSON.parse('<%- JSON.stringify(monthlySales) %>');
+            console.log(datas);
+            var categorySales = JSON.parse('<%- JSON.stringify(categorySales) %>');
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const xValues = datas.map(entry => {
+                const month = entry._id.month;
+                const year = entry._id.year;
+                return `${monthNames[month - 1]} ${year}`;
+            });
+
+            const yValues = datas.map(entry => entry.total);
+
+            new Chart("myChart", {
+                type: "bar",
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        backgroundColor: "#c6c3e9",
+                        data: yValues,
+                    }],
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: "Total Sales",
+                            },
+                        },
+                    },
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: "Monthly Sales Chart",
+                    },
+                },
+            });
+
+            const categoryNames = categorySales.map((item) => item.category);
+            const categorySalesData = categorySales.map((item) => item.totalSales);
+            const backgroundColors = ["#FF5733", "#33FF57", "#3357FF"];
+
+            var donutData = {
+                labels: categoryNames,
+                datasets: [
+                    {
+                        data: categorySalesData,
+                        backgroundColor: backgroundColors,
+                    },
+                ],
+            };
+
+            new Chart('donutChart', {
+                type: 'doughnut',
+                data: donutData,
+                options: {
+                    legend: { display: true },
+                    title: {
+                        display: true,
+                        text: 'Category Sales',
+                    },
+                },
+            });
+        }
+
+        $(document).ready(function () {
+            console.log("ready!");
+            chartLoad();
+        });
+
+
+    </script> -->
+
+
+
+
+
 </body>
 
 </html>

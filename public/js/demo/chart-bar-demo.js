@@ -11,8 +11,8 @@ function number_format(number, decimals, dec_point, thousands_sep) {
     sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
     dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
     s = '',
-    toFixedFix = function(n, prec) {
-      var k = Math.pow(10, prec);
+    toFixedFix = function (n, prec) {
+      var k = Math.pow(1, prec);
       return '' + Math.round(n * k) / k;
     };
   // Fix for IE parseFloat(0.55).toFixed(0) = 0;
@@ -28,84 +28,164 @@ function number_format(number, decimals, dec_point, thousands_sep) {
 }
 
 // Bar Chart Example
-var ctx = document.getElementById("myBarChart");
-var myBarChart = new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: ["January", "February", "March", "April", "May", "June"],
-    datasets: [{
-      label: "Revenue",
-      backgroundColor: "#4e73df",
-      hoverBackgroundColor: "#2e59d9",
-      borderColor: "#4e73df",
-      data: [4215, 5312, 6251, 7841, 9821, 14984],
-    }],
-  },
-  options: {
-    maintainAspectRatio: false,
-    layout: {
-      padding: {
-        left: 10,
-        right: 25,
-        top: 25,
-        bottom: 0
-      }
-    },
-    scales: {
-      xAxes: [{
-        time: {
-          unit: 'month'
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false
-        },
-        ticks: {
-          maxTicksLimit: 6
-        },
-        maxBarThickness: 25,
+function init(monthlySalesData) {
+  const months = monthlySalesData.revenueAndSalesByMonth.map((x) => (x.month))
+  const sales = monthlySalesData.revenueAndSalesByMonth.map((x) => (x.sales))
+  console.log("months :", months);
+  var ctx = document.getElementById("myBarChart");
+  var myBarChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      // labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+      labels: months,
+      datasets: [{
+        label: "Revenue",
+        backgroundColor: "#4e73df",
+        hoverBackgroundColor: "#2e59d9",
+        borderColor: "#4e73df",
+        // data: [4215, 5312, 6251, 7841, 9821, 14984, 4215, 5312, 6251, 7841, 9821, 14984],
+        data: sales
       }],
-      yAxes: [{
-        ticks: {
-          min: 0,
-          max: 15000,
-          maxTicksLimit: 5,
-          padding: 10,
-          // Include a dollar sign in the ticks
-          callback: function(value, index, values) {
-            return '$' + number_format(value);
+    },
+    options: {
+      maintainAspectRatio: false,
+      layout: {
+        padding: {
+          left: 10,
+          right: 25,
+          top: 25,
+          bottom: 0
+        }
+      },
+      scales: {
+        xAxes: [{
+          time: {
+            unit: 'month'
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+          ticks: {
+            maxTicksLimit: 6
+          },
+          maxBarThickness: 25,
+        }],
+        yAxes: [{
+          ticks: {
+            min: 0,
+            max: 100,
+            maxTicksLimit: 5,
+            padding: 10,
+            // Include a dollar sign in the ticks
+            callback: function (value, index, values) {
+              return number_format(value);
+            }
+          },
+          gridLines: {
+            color: "rgb(234, 236, 244)",
+            zeroLineColor: "rgb(234, 236, 244)",
+            drawBorder: false,
+            borderDash: [2],
+            zeroLineBorderDash: [2]
           }
-        },
-        gridLines: {
-          color: "rgb(234, 236, 244)",
-          zeroLineColor: "rgb(234, 236, 244)",
-          drawBorder: false,
-          borderDash: [2],
-          zeroLineBorderDash: [2]
+        }],
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        titleMarginBottom: 10,
+        titleFontColor: '#6e707e',
+        titleFontSize: 14,
+        backgroundColor: "rgb(255,255,255)",
+        bodyFontColor: "#858796",
+        borderColor: '#dddfeb',
+        borderWidth: 1,
+        xPadding: 15,
+        yPadding: 15,
+        displayColors: false,
+        caretPadding: 10,
+        callbacks: {
+          label: function (tooltipItem, chart) {
+            var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+            return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+          }
         }
+      },
+    }
+  });
+}
+
+function categoryInit(categorySalesData) {
+  console.log("data :", categorySalesData);
+
+  const categories = categorySalesData.categorySales.map((x) => (x.category))
+  const totalSales = categorySalesData.categorySales.map((x) => (x.totalSales))
+  // console.log("months :", categories);
+  var ctx = document.getElementById("myPieChart");
+  var myPieChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      //labels: ["Fastfood", "Indian", "Beverage", "Others"],
+      labels: categories,
+
+      datasets: [{
+        // data: [40, 30, 20, 10],
+        data: totalSales,
+
+        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#B31C2A'],
+        hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#96121f'],
+        hoverBorderColor: "rgba(234, 236, 244, 1)",
       }],
     },
-    legend: {
-      display: false
+    options: {
+      maintainAspectRatio: false,
+      tooltips: {
+        backgroundColor: "rgb(255,255,255)",
+        bodyFontColor: "#858796",
+        borderColor: '#dddfeb',
+        borderWidth: 1,
+        xPadding: 15,
+        yPadding: 15,
+        displayColors: false,
+        caretPadding: 10,
+      },
+      legend: {
+        display: true
+      },
+      cutoutPercentage: 80,
     },
-    tooltips: {
-      titleMarginBottom: 10,
-      titleFontColor: '#6e707e',
-      titleFontSize: 14,
-      backgroundColor: "rgb(255,255,255)",
-      bodyFontColor: "#858796",
-      borderColor: '#dddfeb',
-      borderWidth: 1,
-      xPadding: 15,
-      yPadding: 15,
-      displayColors: false,
-      caretPadding: 10,
-      callbacks: {
-        label: function(tooltipItem, chart) {
-          var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-          return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
-        }
-      }
-    },
-  }
-});
+  });
+
+}
+const requestOptions = {
+  method: "GET",
+  headers: { "Content-Type": "application/json" },
+};
+
+
+const categorySalesPromise = fetch("/admin/getCategorySales", requestOptions).then(res => res.json());
+const monthlySalesPromise = fetch("/admin/getMonthlySales", requestOptions).then(res => res.json());
+
+
+Promise.all([categorySalesPromise, monthlySalesPromise])
+  .then(([categorySalesData, monthlySalesData]) => {
+    console.log("Response Category Sales", categorySalesData);
+    console.log("Response Monthly Sales", monthlySalesData);
+
+    categoryInit(categorySalesData);
+    init(monthlySalesData);
+  }).catch((error) => {
+    console.error("API Error", error);
+  });
+
+// fetch("/admin/getMonthlySales", requestOptions)
+//   .then((res) => res.json())
+//   .then((data) => {
+//     console.log("response monthy sales", data)
+//     init(data);
+//   }).catch((error) => {
+//     console.log("Monthly sales api error", error);
+//   })
+

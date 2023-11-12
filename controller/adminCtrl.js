@@ -9,9 +9,158 @@ const offerBoxModel = require("../models/offerBoxModel");
 const dateFns = require("date-fns");
 const { uploadImage } = require("../services/admin/productService");
 const { uploadSingleImage } = require("../services/admin/singleImageService");
-
+const moment = require('moment');
 
 module.exports = {
+
+
+  loadDashboard: async (req, res) => {
+    try {
+      const currentDate = new Date();
+      const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
+      const revenueByMonth = await orderModel.aggregate([
+        {
+          $match: {
+            status: 'delivered',
+            createdAt: {
+              $gte: startOfMonth,
+              $lte: endOfMonth,
+            },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalRevenue: { $sum: '$billAmount' },
+          },
+        },
+      ]);
+      const totalOrders = await orderModel.aggregate([
+        {
+          $match: {
+            createdAt: {
+              $gte: startOfMonth,
+              $lte: endOfMonth,
+            },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            orderCount: { $sum: 1 },
+          },
+        },
+      ]);
+      console.log("totalOrders", totalOrders)
+      const monthlySales = await orderModel.aggregate([
+        {
+          $match: {
+            status: 'delivered',
+          },
+        },
+        {
+          $group: {
+            _id: {
+              year: { $year: '$createdAt' },
+              month: { $month: '$createdAt' },
+            },
+            total: { $sum: '$billAmount' },
+          },
+        },
+      ]);
+      console.log("monthlySales", monthlySales)
+
+      const salesCount = await orderModel.aggregate([
+        {
+          $match: {
+            status: 'delivered',
+          },
+        },
+        {
+          $group: {
+            _id: {
+              $dateToString: {
+                format: '%Y-%m-%d',
+                date: '$createdAt',
+              },
+            },
+            orderCount: { $sum: 1 },
+          },
+        },
+        {
+          $sort: {
+            _id: 1,
+          },
+        },
+      ]);
+      console.log("salesCount", salesCount)
+
+      const categorySales = await orderModel.aggregate([
+        {
+          $match: {
+            status: 'delivered',
+          },
+        },
+        {
+          $unwind: "$orderItems",
+        },
+        {
+          $lookup: {
+            from: 'productModel', // Use the correct collection name for your products
+            localField: 'orderItems._id',
+            foreignField: '_id',
+            as: 'productData',
+          },
+        },
+        {
+          $unwind: '$productData',
+        },
+        {
+          $lookup: {
+            from: 'categoryModel', // Use the correct collection name for your categories
+            localField: 'productData.productCategory', // Assuming this is the field in your product schema that references categories
+            foreignField: '_id',
+            as: 'categoryData',
+          },
+        },
+        {
+          $unwind: '$categoryData',
+        },
+        {
+          $group: {
+            _id: '$categoryData.categoryName', // Use the correct field in your category model to reference the name
+            totalSales: { $sum: '$orderItems.quantity' },
+          },
+        },
+        {
+          $project: {
+            _id: 0, // Exclude the default _id field
+            category: '$_id',
+            totalSales: 1,
+          },
+        },
+        {
+          $sort: {
+            totalSales: -1, // Sort in descending order of totalSales
+          },
+        },
+      ]);
+
+      console.log("categorySales", categorySales)
+
+      const totalProducts = await productModel.countDocuments();
+      console.log("totalProducts", totalProducts)
+
+
+      res.json({ revenueByMonth, monthlySales: monthlySales, salesCount, totalOrders, totalProducts, categorySales });
+
+    } catch (error) {
+      console.log(error.message)
+    }
+  },
+
   getAdmin: async (req, res, next) => {
     try {
       //dashboard updated
@@ -50,6 +199,74 @@ module.exports = {
         revenueByMonth[month.toLowerCase()] = item.revenue;
       });
 
+      const monthlySales = await orderModel.aggregate([
+        {
+          $match: {
+            status: 'delivered',
+          },
+        },
+        {
+          $group: {
+            _id: {
+              year: { $year: '$createdAt' },
+              month: { $month: '$createdAt' },
+            },
+            total: { $sum: '$billAmount' },
+          },
+        },
+      ]);
+
+      const categorySales = await orderModel.aggregate([
+        {
+          $match: {
+            status: 'delivered',
+          },
+        },
+        {
+          $unwind: "$orderItems",
+        },
+        {
+          $lookup: {
+            from: 'products', // Use the correct collection name for your products
+            localField: 'orderItems.product',
+            foreignField: '_id',
+            as: 'productData',
+          },
+        },
+        {
+          $unwind: '$productData',
+        },
+        {
+          $lookup: {
+            from: 'categories', // Use the correct collection name for your categories
+            localField: 'productData.productCategory', // Assuming this is the field in your product schema that references categories
+            foreignField: '_id',
+            as: 'categoryData',
+          },
+        },
+        {
+          $unwind: '$categoryData',
+        },
+        {
+          $group: {
+            _id: '$categoryData.categoryName', // Use the correct field in your category model to reference the name
+            totalSales: { $sum: '$orderItems.quantity' },
+          },
+        },
+        {
+          $project: {
+            _id: 0, // Exclude the default _id field
+            category: '$_id',
+            totalSales: 1,
+          },
+        },
+        {
+          $sort: {
+            totalSales: -1, // Sort in descending order of totalSales
+          },
+        },
+      ]);
+
       const userCount = await userModel.countDocuments();
       const productCount = await productModel.countDocuments();
       const dashboardData = {
@@ -59,49 +276,185 @@ module.exports = {
         userCount,
         productCount
       }
-      res.render("admin/admin", { dashboardData, revenueByMonth });
+      res.render("admin/admin", { dashboardData, revenueByMonth, categorySales, monthlySales });
     } catch (error) {
       next(error)
     }
   },
 
-  getDashboardData: async (req, res, next) => {
+  getMonthlySales: async (req, res, next) => {
     try {
-      const revenueAndSalesByMonth = await orderModel.aggregate([
+      console.log("hiii");
+      let revenueAndSalesByMonth = await orderModel.aggregate([
         {
           $group: {
             _id: { $month: "$createdAt" },
             revenue: { $sum: '$billAmount' },
-            sales: { $sum: 1 }
+            sales: { $sum: 1 },
+            month: {
+              $first: '$createdAt'
+            },
           }
-        }
+        },
       ]);
-      const revenueByMonth = {};
-      let totalRevenue = 0;
-      let totalSales = 0;
-      revenueAndSalesByMonth.forEach(item => {
-        revenueByMonth[item._id] = {
-          revenue: item.revenue,
-          sales: item.sales
-        };
-        totalRevenue += item.revenue;
-        totalSales += item.sales;
-      });
+      revenueAndSalesByMonth = revenueAndSalesByMonth.map((x) => {
+        x.month = moment(x.month).format("MMMM");
+        return x;
+      })
+      console.log("revenueAndSalesByMonth", revenueAndSalesByMonth);
 
-      const userCount = await userModel.countDocuments();
-      const productCount = await productModel.countDocuments();
-      console.log(revenueByMonth)
       res.send({
-        revenueByMonth,
-        totalRevenue,
-        totalSales,
-        userCount,
-        productCount
+        revenueAndSalesByMonth
+
       });
     } catch (error) {
       res.status(500).send({ error: error.message });
     }
   },
+
+
+  getCategorySales: async (req, res, next) => {
+    try {
+      console.log("Hi from Category sales");
+      //     const revenueAndSalesByCategory = await orderModel.aggregate([
+      //       {
+      //         $group: {
+      //           _id: { $month: "$createdAt" },
+      //           revenue: { $sum: '$billAmount' },
+      //           sales: { $sum: 1 }
+      //         }
+      //       }
+      //     ]);
+      //     console.log("revenueAndSalesByCategory", revenueAndSalesByCategory);
+
+      //     // const revenueByMonth = {};
+      //     // let totalRevenue = 0;
+      //     // let totalSales = 0;
+      //     // revenueAndSalesByMonth.forEach(item => {
+      //     //   revenueByMonth[item._id] = {
+      //     //     revenue: item.revenue,
+      //     //     sales: item.sales
+      //     //   };
+      //     //   totalRevenue += item.revenue;
+      //     //   totalSales += item.sales;
+      //     // });
+
+      // const categorySales = await orderModel.aggregate([
+      //   {
+      //     $match: {
+      //       orderStatus: 'delivered',
+      //     },
+      //   },
+      //   {
+      //     $unwind: "$orderItems",
+      //   },
+      //   {
+      //     $lookup: {
+      //       from: 'productModel', // Use the correct collection name for your products
+      //       localField: 'orderItems.product',
+      //       foreignField: '_id',
+      //       as: 'productData',
+      //     },
+      //   },
+      //   {
+      //     $unwind: '$productData',
+      //    },
+      //   // {
+      //   //   $lookup: {
+      //   //     from: 'categoryModel', // Use the correct collection name for your categories
+      //   //     localField: 'productData.productCategory', // Assuming this is the field in your product schema that references categories
+      //   //     foreignField: '_id',
+      //   //     as: 'categoryData',
+      //   //   },
+      //   // },
+      //   // {
+      //   //   $unwind: '$categoryData',
+      //   // },
+      //   // {
+      //   //   $group: {
+      //   //     _id: '$categoryData.categoryName', // Use the correct field in your category model to reference the name
+      //   //     totalSales: { $sum: '$orderItems.billAmount' },
+      //   //   },
+      //   // },
+      //   // {
+      //   //   $project: {
+      //   //     _id: 0, // Exclude the default _id field
+      //   //     category: '$_id',
+      //   //     totalSales: 1,
+      //   //   },
+      //   // },
+
+      // ]);
+
+
+      const categorySales = await orderModel.aggregate([
+        {
+          $match: {
+            orderStatus: 'delivered',
+          },
+        },
+        {
+          $unwind: "$orderItems",
+        },
+        {
+          $lookup: {
+            from: 'products', // Use the correct collection name for your products
+            localField: 'orderItems.product',
+            foreignField: '_id',
+            as: 'productData',
+          },
+        },
+        {
+          $unwind: '$productData',
+        },
+        {
+          $lookup: {
+            from: 'categories', // Use the correct collection name for your categories
+            localField: 'productData.productCategory', // Assuming this is the field in your product schema that references categories
+            foreignField: '_id',
+            as: 'categoryData',
+          },
+        },
+        {
+          $unwind: '$categoryData',
+        },
+        {
+          $group: {
+            _id: '$categoryData.categoryName', // Use the correct field in your category model to reference the name
+            totalSales: { $sum: '$orderItems.quantity' },
+          },
+        },
+        {
+          $project: {
+            _id: 0, // Exclude the default _id field
+            category: '$_id',
+            totalSales: 1,
+          },
+        },
+        // {
+        //   $project: {
+        //     orderItemsProduct: '$orderItems.product',
+        //     productData: '$productData',
+        //   },
+        // },
+
+
+        {
+          $sort: {
+            totalSales: -1, // Sort in descending order of totalSales
+          },
+        },
+      ]);
+
+      console.log("categorySales", categorySales)
+      res.send({
+        categorySales,
+      });
+    } catch (error) {
+      res.status(500).send({ error: error.message });
+    }
+  },
+
 
   postAdminLogin: async (req, res, next) => {
     try {
@@ -744,4 +1097,168 @@ module.exports = {
       next(error)
     }
   },
+
+  viewSalesReport: async (req, res, next) => {
+    try {
+      const result = await orderModel.aggregate([
+        // {
+        //   $match: {
+        //     matchStage
+
+        //   }
+        // },
+        {
+          $lookup: {
+            from: userModel.collection.name,
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'user',
+          },
+        },
+        {
+          $unwind: '$user',
+        },
+        {
+          $lookup: {
+            from: productModel.collection.name,
+            localField: 'orderItems.product',
+            foreignField: '_id',
+            as: 'productData',
+          },
+        },
+        {
+          $unwind: '$productData',
+        },
+        {
+          $lookup: {
+            from: categoryModel.collection.name,
+            localField: 'productData.productCategory',
+            foreignField: '_id',
+            as: 'categoryData',
+          },
+        },
+        {
+          $unwind: '$categoryData',
+        },
+        {
+          $project: {
+            _id: 0,
+            username: '$user.username',
+            totalAmount: 1,
+            createdAt: 1,
+            productCategory: '$categoryData.categoryName',
+            productName: '$productData.productName',
+            productPrice: '$productData.productPrice',
+            status: '$orderStatus',
+          },
+        },
+      ]);
+      console.log("Sales Report result :", result)
+      // res.json({ result })
+      // Render the sales report table (you can customize this part based on your frontend framework)
+      res.render('admin/salesReport', { salesData: result });
+    } catch (error) {
+      console.log(error.message)
+    }
+  },
+
+
+
+  getSalesReport: async (req, res) => {
+    try {
+
+      // const startDate = "2023-10-19";
+      // const endDate = "2023-10-26";
+      // const status = "cancelled";
+
+      console.log("querystartDate", req.body.startDate)
+      console.log("queryendDate", req.body.endDate)
+      console.log("querystatusFilter", req.body.statusFilter)
+
+      const startDate = new Date(req.body.startDate);
+      const endDate = new Date(req.body.endDate);
+      const status = req.body.statusFilter;
+
+      // const startDate = " ";
+      // const endDate = "2023-10-25T14:46:15.519+00:00";
+      // const status = "pending";
+
+      console.log('startDate:', startDate);
+      console.log('endDate:', endDate);
+      console.log('status:', status);
+
+      const matchStage = {
+        createdAt: { $gte: startDate, $lte: endDate },
+      };
+
+
+
+
+      console.log("matchStage", matchStage);
+      if (status && status !== 'all') {
+        matchStage.orderStatus = status;
+      }
+
+      const result = await orderModel.aggregate([
+        {
+          $match: matchStage
+        },
+        {
+          $lookup: {
+            from: userModel.collection.name,
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'user',
+          },
+        },
+        {
+          $unwind: '$user',
+        },
+        {
+          $lookup: {
+            from: productModel.collection.name,
+            localField: 'orderItems.product',
+            foreignField: '_id',
+            as: 'productData',
+          },
+        },
+        {
+          $unwind: '$productData',
+        },
+        {
+          $lookup: {
+            from: categoryModel.collection.name,
+            localField: 'productData.productCategory',
+            foreignField: '_id',
+            as: 'categoryData',
+          },
+        },
+        {
+          $unwind: '$categoryData',
+        },
+        {
+          $project: {
+            _id: 0,
+            username: '$user.username',
+            totalAmount: 1,
+            createdAt: 1,
+            productCategory: '$categoryData.categoryName',
+            productName: '$productData.productName',
+            productPrice: '$productData.productPrice',
+            status: '$orderStatus',
+          },
+        },
+      ]);
+      console.log("Sales Report result :", result)
+      res.json({ result })
+      // Render the sales report table (you can customize this part based on your frontend framework)
+      //res.render('admin/salesReport', { salesData: result });
+
+    } catch (error) {
+      console.log(error.message);
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+
 };
