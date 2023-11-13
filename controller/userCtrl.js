@@ -929,6 +929,7 @@ module.exports = {
       } else {
         const error = new Error("Product detailed view not available!");
         error.status = 400;
+        res.render("user/404");
         throw error;
       }
     } catch (err) {
@@ -1368,7 +1369,7 @@ module.exports = {
           select: "username email phoneNumber" // Select the fields you want to retrieve from the user document
         }).populate({
           path: "addressId", // Populate the 'userId' field in the order document
-          select: "flaNo street landmark district" // Select the fields you want to retrieve from the user document
+          select: "flatNo street landmark district" // Select the fields you want to retrieve from the user document
         })
         .populate(
           {

@@ -40,10 +40,6 @@
             ;
         }
     </style>
-
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
-
 </head>
 
 <body id="page-top animsition">
@@ -230,19 +226,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="col-lg-6">
-                                    <div class="card card-body mb-4 chartDonutCard">
-                                        <canvas id="donutChart" style="width: 60%; "></canvas>
-                                    </div>
-                                </div> -->
                             </div>
 
                         </div>
-
-
-                        <!-- Bar Chart Container -->
-                        <!-- Donut Chart Container -->
-
 
 
 
@@ -335,94 +321,6 @@
     <script src="../../js/demo/chart-area-demo.js"></script>
     <script src="../../js/demo/chart-pie-demo.js"></script>
     <script src="../../js/demo/chart-bar-demo.js"></script>
-
-
-
-    <!-- <script>
-        function chartLoad() {
-
-            console.log("monthlySales", monthlySales);
-            console.log("categorySales", monthlySales);
-
-
-            const datas = JSON.parse('<%- JSON.stringify(monthlySales) %>');
-            console.log(datas);
-            var categorySales = JSON.parse('<%- JSON.stringify(categorySales) %>');
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            const xValues = datas.map(entry => {
-                const month = entry._id.month;
-                const year = entry._id.year;
-                return `${monthNames[month - 1]} ${year}`;
-            });
-
-            const yValues = datas.map(entry => entry.total);
-
-            new Chart("myChart", {
-                type: "bar",
-                data: {
-                    labels: xValues,
-                    datasets: [{
-                        backgroundColor: "#c6c3e9",
-                        data: yValues,
-                    }],
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: "Total Sales",
-                            },
-                        },
-                    },
-                    legend: { display: false },
-                    title: {
-                        display: true,
-                        text: "Monthly Sales Chart",
-                    },
-                },
-            });
-
-            const categoryNames = categorySales.map((item) => item.category);
-            const categorySalesData = categorySales.map((item) => item.totalSales);
-            const backgroundColors = ["#FF5733", "#33FF57", "#3357FF"];
-
-            var donutData = {
-                labels: categoryNames,
-                datasets: [
-                    {
-                        data: categorySalesData,
-                        backgroundColor: backgroundColors,
-                    },
-                ],
-            };
-
-            new Chart('donutChart', {
-                type: 'doughnut',
-                data: donutData,
-                options: {
-                    legend: { display: true },
-                    title: {
-                        display: true,
-                        text: 'Category Sales',
-                    },
-                },
-            });
-        }
-
-        $(document).ready(function () {
-            console.log("ready!");
-            chartLoad();
-        });
-
-
-    </script> -->
-
-
-
-
-
 </body>
 
 </html>
