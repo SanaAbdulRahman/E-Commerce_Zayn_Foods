@@ -1355,61 +1355,135 @@ module.exports = {
     }
   },
 
+
+
   getOrders: async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 12;
     const skip = (page - 1) * limit;
     const userId = req.session.userId;
+
     try {
-
-
       const orders = await orderModel.find({ userId: userId, isPlaced: true })
         .populate({
-          path: "userId", // Populate the 'userId' field in the order document
-          select: "username email phoneNumber" // Select the fields you want to retrieve from the user document
-        }).populate({
-          path: "addressId", // Populate the 'userId' field in the order document
-          select: "flatNo street landmark district" // Select the fields you want to retrieve from the user document
+          path: "userId",
+          select: "username email phoneNumber"
         })
-        .populate(
-          {
-            path: "orderItems",
-            populate: {
-              path: "product"
-            }
-          }
-        )
-        .sort({ orderId: -1 })
-        .skip(skip) // Skip the specified number of orders based on current page
+        .populate({
+          path: "addressId",
+          select: "flatNo street landmark district"
+        })
+        .populate({
+          path: "orderItems.product", // Populate the 'product' field in the 'orderItems' array
+          select: "productName price"
+        })
+        .sort({ createdAt: -1 }) // Assuming 'createdAt' is the timestamp when the order was created
+        .skip(skip)
         .limit(limit);
-      console.log('orders', orders);
-      // Perform a lookup to retrieve address details based on addressId
-      if (orders) {
-        // If userId and addressId are available in the order
-        var addressDetails = await addressModel.findOne({ _id: orders[2].addressId });
-        if (addressDetails) {
-          // Address details found, you can access them using addressDetails object
-          console.log('Address Details:', addressDetails);
-        } else {
-          console.log('Address details not found.');
-        }
-      } else {
-        console.log('User or address details not found in the order.');
-      }
+
+      console.log("orders", orders)
 
       const totalOrders = await orderModel.find({ userId: userId, isPlaced: true }).count();
-      console.log("totalOrders", totalOrders);
+
       let cartStatus = await cartModel.find({ user: userId });
       let cartDishCount = cartStatus[0]?.cartItems.length || 0;
+
       res.render("user/orders", {
-        orders, user: orders[1].userId, address: orders[2].addressId, cartDishCount, current: page,
+        orders,
+        user: (orders[0] && orders[0].userId) || null,
+        address: (orders[0] && orders[0].addressId) || null,
+        cartDishCount,
+        current: page,
         pages: Math.ceil(totalOrders / limit),
       });
+
     } catch (error) {
       console.error(error);
       res.status(500).send(error);
     }
   },
+
+
+
+
+
+
+
+  // getOrders: async (req, res, next) => {
+  //   const page = parseInt(req.query.page) || 1;
+  //   const limit = parseInt(req.query.limit) || 12;
+  //   const skip = (page - 1) * limit;
+  //   const userId = req.session.userId;
+  //   try {
+
+
+  //     const orders = await orderModel.find({ userId: userId, isPlaced: true })
+  //       .populate({
+  //         path: "userId", // Populate the 'userId' field in the order document
+  //         select: "username email phoneNumber" // Select the fields you want to retrieve from the user document
+  //       }).populate({
+  //         path: "addressId", // Populate the 'userId' field in the order document
+  //         select: "flatNo street landmark district" // Select the fields you want to retrieve from the user document
+  //       })
+  //       .populate(
+  //         {
+  //           path: "orderItems",
+  //           populate: {
+  //             path: "product"
+  //           }
+  //         }
+  //       )
+  //       .sort({ orderId: -1 })
+  //       .skip(skip) // Skip the specified number of orders based on current page
+  //       .limit(limit);
+  //     console.log('orders', orders);
+  //     // Perform a lookup to retrieve address details based on addressId
+
+  //     // if (orders && orders.length >= 1) {
+  //     //   // If userId and addressId are available in the order
+  //     //   const addressDetails = await addressModel.findOne({ _id: orders[2].addressId });
+
+  //     //   console.log("addressDetails", addressDetails);
+
+  //     //   if (addressDetails) {
+  //     //     // Address details found, you can access them using addressDetails object
+  //     //     console.log('Address Details:', addressDetails);
+  //     //   } else {
+  //     //     console.log('Address details not found.');
+  //     //   }
+  //     // } else {
+  //     //   console.log('User or address details not found in the order.');
+  //     // }
+
+
+  //     // if (orders) {
+  //     //   // If userId and addressId are available in the order
+  //     //   var addressDetails = await addressModel.findOne({ _id: orders[2].addressId });
+  //     //   console.log("addressDetails", addressDetails);
+  //     //   if (addressDetails) {
+  //     //     // Address details found, you can access them using addressDetails object
+  //     //     console.log('Address Details:', addressDetails);
+  //     //   } else {
+  //     //     console.log('Address details not found.');
+  //     //   }
+  //     // } else {
+  //     //   console.log('User or address details not found in the order.');
+  //     // }
+
+  //     const totalOrders = await orderModel.find({ userId: userId, isPlaced: true }).count();
+  //     console.log("totalOrders", totalOrders);
+  //     let cartStatus = await cartModel.find({ user: userId });
+  //     let cartDishCount = cartStatus[0]?.cartItems.length || 0;
+  //     res.render("user/orders", {
+  //       orders, user: orders[1].userId, address: orders[2].addressId, cartDishCount, current: page,
+  //       pages: Math.ceil(totalOrders / limit),
+  //     });
+
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).send(error);
+  //   }
+  // },
 
   getOrderDetails: async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
