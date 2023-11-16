@@ -5,12 +5,16 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 const morgan = require('morgan');
-const dbConnect = require("./config/dbConnect");
+
+//const dbConnect = require("./config / dbConnect");
+
+const connectToMongoDB = require("./config/dbConnect");
+
 const userRouter = require("./routes/userRoutes");
 const adminRouter = require("./routes/adminRoutes");
 
-
-dbConnect();
+connectToMongoDB();
+//dbConnect();
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -54,6 +58,6 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).send({ status: err.status || 500, message: err.message });
 });
 
-app.listen(process.env.PORT, () => {
-  console.log("Server is running at 8080");
+app.listen(process.env.PORT || 8080, () => {
+  console.log(`Server is running at 8080 ${process.env.PORT}`);
 });
